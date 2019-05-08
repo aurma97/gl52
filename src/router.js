@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import VueDemo from '@/components/VueDemo'
+import Index from '@/components/Index'
 import Messages from '@/components/Messages'
+import Equipements from '@/components/Equipements'
 
 Vue.use(Router)
 
@@ -10,12 +11,17 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: VueDemo
+      component: Index
     },
     {
       path: '/messages',
       name: 'messages',
       component: Messages
+    },
+    {
+      path: '/equipements',
+      name: 'equipements',
+      component: Equipements
     }
   ]
 })

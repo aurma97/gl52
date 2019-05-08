@@ -1,21 +1,23 @@
 <template>
   <div id="app">
-    <h1>Django VueJs Template</h1>
-    <div id="nav">
-     <router-link :to="{ name: 'home' }">Vue</router-link> |
-     <router-link :to="{ name: 'messages' }">Django Rest</router-link>
-    </div>
-    <router-view/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <app-header></app-header>
+    <ico icon="fas plus"></ico>
+    <router-view></router-view>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<script>
+import Header from './components/headfoot/Header.vue'
+export default {
+  components:{
+    'app-header': Header
+  }
 }
+</script>
+
+<style>
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "~bulma/css/bulma.css";
 </style>
