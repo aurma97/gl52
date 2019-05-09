@@ -15,4 +15,4 @@ urlpatterns = [
 
     # url = http://localhost:8000/api/manage/reservation/update-or-delete/<pk>
     path('update-or-delete/<pk>', BookedUdView.as_view()),
-]   
+]

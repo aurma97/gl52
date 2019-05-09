@@ -34,7 +34,7 @@ class Booked(models.Model):
         ('1', 'Terminé'),
     )
     status = models.CharField(max_length=1, choices=status_choice)
-    equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT)
+    equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT, unique=True)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def __str__(self):

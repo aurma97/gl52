@@ -1,4 +1,4 @@
-# GL52 Project ✌️ 🐍
+# GL52 Project
 
 Winter 2019 - UTBM
 
@@ -49,17 +49,7 @@ $ python manage.py migrate
 
 ## Running Development Servers
 
-```
-$ python manage.py runserver
-```
-
-From another tab in the same directory:
-
-```
-$ yarn serve
-```
-
-The Vue application will be served from [`localhost:8080`](http://localhost:8080/) and the Django API
+Vue application will be served from [`localhost:8080`](http://localhost:8080/) and Django API
 and static files will be served from [`localhost:8000`](http://localhost:8000/).
 
 The dual dev server setup allows you to take advantage of
@@ -72,7 +62,7 @@ development server only on `:8000`, but you have to build build the Vue app firs
 and the page will not reload on changes.
 
 ```
-$ yarn build
+$ npm run serve
 $ python manage.py runserver
 ```
 
