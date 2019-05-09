@@ -25,9 +25,6 @@ If this setup is not what you are looking for, you might want look at other simi
 
 Prefer Flask? Checkout my [gtalarico/flask-vuejs-template](https://github.com/gtalarico/flask-vuejs-template)
 
-### Demo
-
-[Live Demo](https://django-vue-template-demo.herokuapp.com/)
 
 ### Includes
 
@@ -39,7 +36,6 @@ Prefer Flask? Checkout my [gtalarico/flask-vuejs-template](https://github.com/gt
 * Vuex
 * Gunicorn
 * Configuration for Heroku Deployment
-
 
 ### Template Structure
 
@@ -58,7 +54,6 @@ Prefer Flask? Checkout my [gtalarico/flask-vuejs-template](https://github.com/gt
 
 Before getting started you should have the following installed and running:
 
-- [X] Yarn - [instructions](https://yarnpkg.com/en/docs/install)
 - [X] Vue CLI 3 - [instructions](https://cli.vuejs.org/guide/installation.html)
 - [X] Python 3 - [instructions](https://wiki.python.org/moin/BeginnersGuide)
 - [X] Pipenv - [instructions](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv)
@@ -111,31 +106,6 @@ $ python manage.py runserver
 
 * Set `ALLOWED_HOSTS` on [`backend.settings.prod`](/backend/settings/prod.py)
 
-### Heroku Server
-
-```
-$ heroku apps:create django-vue-template-demo
-$ heroku git:remote --app django-vue-template-demo
-$ heroku buildpacks:add --index 1 heroku/nodejs
-$ heroku buildpacks:add --index 2 heroku/python
-$ heroku addons:create heroku-postgresql:hobby-dev
-$ heroku config:set DJANGO_SETTINGS_MODULE=backend.settings.prod
-$ heroku config:set DJANGO_SECRET_KEY='...(your django SECRET_KEY value)...'
-
-$ git push heroku
-```
-
-Heroku's nodejs buildpack will handle install for all the dependencies from the [`package.json`](/package.json) file.
-It will then trigger the `postinstall` command which calls `yarn build`.
-This will create the bundled `dist` folder which will be served by whitenoise.
-
-The python buildpack will detect the [`Pipfile`](/Pipfile) and install all the python dependencies.
-
-The [`Procfile`](/Procfile) will run Django migrations and then launch Django'S app using gunicorn, as recommended by heroku.
-
-##### Heroku One Click Deploy
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gtalarico/django-vue-template)
 
 ## Static Assets
 
@@ -154,5 +124,3 @@ Whitenoise will serve static files to your CDN once, but then those assets are c
 and served directly by the CDN.
 
 This allows for an extremely simple setup without the need for a separate static server.
-
-[Cloudfront Setup Wiki](https://github.com/gtalarico/django-vue-template/wiki/Setup-CDN-on-Cloud-Front)
