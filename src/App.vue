@@ -2,8 +2,9 @@
   <div id="app">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
     <app-header></app-header>
-    <ico icon="fas plus"></ico>
+    
     <router-view></router-view>
   </div>
 </template>

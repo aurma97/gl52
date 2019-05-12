@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from ..location.models import Location
+from ..patient.models import Patient
 # Create your models here.
 
 class EquipmentType(models.Model):
@@ -19,9 +20,7 @@ class Equipments(models.Model):
     last_check = models.DateField(default=None)
     type_id = models.ForeignKey(EquipmentType, default=None, on_delete=models.PROTECT)
     location = models.ForeignKey(Location, default=None, on_delete=models.PROTECT)
-    last_location = models.CharField(default=None, max_length=100)
-    reservation = models.ManyToManyField(User, through='Booked')
-
+    
     def __str__(self):
         return self.name
     
@@ -34,8 +33,10 @@ class Booked(models.Model):
         ('1', 'Terminé'),
     )
     status = models.CharField(max_length=1, choices=status_choice)
+    motif = models.TextField(max_length=1000, default=None, blank=True, null=True)
     equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT, unique=True)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT, default=None, blank=True, null=True)
 
     def __str__(self):
         return str(self.id)

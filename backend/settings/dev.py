@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'backend.api',
     'backend.location',
     'backend.equipments',
-    'backend.users'
+    'backend.users',
+    'backend.patient'
 ]
 
 MIDDLEWARE = [

@@ -17,7 +17,6 @@ class EquipmentCreateView(mixins.CreateModelMixin, generics.ListAPIView):
     serializer_class = EquipmentsSerializer
     queryset = Equipments.objects.all().select_related('location').select_related('type_id')
 
-
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -28,6 +27,7 @@ class EquipmentCreateView(mixins.CreateModelMixin, generics.ListAPIView):
 class EquipmentUdView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     serializer_class = EquipmentsSerializer
+    pass
 
     def get_queryset(self):
         post = Equipments.objects.all().select_related('location').select_related('type_id')

@@ -4,8 +4,5 @@ from .models import Location
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        field = [
-            'id',
-            'name',
-        ]
+        fields = ('__all__')
         read_only_fields = ['id']
