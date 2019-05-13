@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import Messages from '@/components/Messages'
-import Equipements from '@/components/Equipements'
+import Equipements from '@/components/equipments/Equipements'
 
 Vue.use(Router)
 

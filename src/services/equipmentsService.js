@@ -18,18 +18,19 @@ export default {
   postEquipment(payload) {
     return api.post(`equipments/create`, payload)
               .then(response => response.data)
+
   },
   updateEquipment(payload) {
     return api.put(`equipments/update-or-delete/${payload.id}`, payload)
               .then(response => response.data)
               .catch(function (error) {
-                console.log(error);
+               
               })
   },
   deleteEquipment(id) {
     return api.delete(`equipments/update-or-delete/${id}`)
               .then(response => { 
-                console.log(response)
+                
               })  
   }
 }

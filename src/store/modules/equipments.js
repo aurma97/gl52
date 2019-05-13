@@ -7,7 +7,7 @@ const state = {
   equipment: [],
   types:[],
   locations:[],
-  errors: []
+  errors: ''
 }
 
 const getters = {
@@ -22,6 +22,9 @@ const actions = {
     .then(Equipments => {
       commit('setEquipments', Equipments)
     })
+  },
+  getErrors () {
+    return state.errors
   },
   getTypes ({ commit }) {
     typeEquipmentsService.fetchTypeEquipments()
@@ -43,12 +46,14 @@ const actions = {
   },
   addEquipment({ commit }, Equipment) {
     equipmentsService.postEquipment(Equipment)
+    .catch(err => state.errors = err.response.status)
     .then(() => {
       commit('addEquipment', Equipment)
     })
   },
   updateEquipment({ commit }, payload) {
     equipmentsService.updateEquipment(payload)
+    .catch(err => state.errors = err.response.data)
     .then(() => {
       commit('addEquipment', payload)
     })
