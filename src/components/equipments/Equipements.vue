@@ -87,8 +87,8 @@
                                     
                                 </section>
                                 <footer class="modal-card-foot">
-                                    <button class="button" type="button" @click="$parent.close()">Annuler</button>
                                     <button class="button is-primary" @click="addEquipment">Valider</button>
+                                    <b-button @click="isComponentModalActive = false">Annuler</b-button>
                                 </footer>
                             </div>
                             <br>
@@ -190,7 +190,7 @@
                     </div>
                     
                     <hr>
-                    <b-field label="Filtre par nom d'équipement">
+                    <b-field label="Filtre par nom d'équipement" v-if="isComponentModalActive == false">
                         <b-input v-model="search"></b-input>                               
                     </b-field>
                     <b-field grouped group-multiline v-if="isComponentModalActive == false">
@@ -402,6 +402,7 @@ export default {
             }
             else{
                 this.isLoading = true
+                this.equipment = []
                 setTimeout(() => {
                     this.$store.dispatch('equipments/getEquipments');
                     //location.reload()
