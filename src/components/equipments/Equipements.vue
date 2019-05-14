@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <hr>
+        <hr>
         <b-tabs position="is-centered" class="block">
             <!-- Gestion des équipements -->
             <b-tab-item label="Les équipements">
@@ -213,7 +214,7 @@
 
                     <b-table
                         v-if="isComponentModalActive == false"
-                        :data="filterEquipments"
+                        :data="isEmpty ? [] : filterEquipments"
                         :paginated="isPaginated"
                         :per-page="perPage"
                         :opened-detailed="defaultOpenedDetails"
@@ -288,9 +289,22 @@
                                 </div>
                             </article>
                         </template>
-                        
-                    </b-table>
 
+                        <!-- isEmpty -->
+                        <template slot="empty">
+                            <section class="section">
+                                <div class="content has-text-grey has-text-centered">
+                                    <p>
+                                        <b-icon
+                                            icon="emoticon-sad"
+                                            size="is-large">
+                                        </b-icon>
+                                    </p>
+                                    <p>Rien par ici.</p>
+                                </div>
+                            </section>
+                        </template>
+                    </b-table>
                     
                 </section>
             </b-tab-item>
@@ -346,10 +360,14 @@ export default {
             isFullPage: true,
             errors:'',
             search:'',
+            isEmpty: false,
         }
     },
     computed:{
         filterEquipments(){
+            if (!this.equipments){
+                this.isEmpty = true
+            }
             return this.equipments.filter((equipment)=>{
                 return equipment.name.match(this.search)
             })

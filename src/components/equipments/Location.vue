@@ -119,7 +119,7 @@
 
             <b-table
                 v-if="isAddLocation == false"
-                :data="filterLocations"
+                :data="isEmpty ? [] : filterLocations"
                 :paginated="isPaginated"
                 :per-page="perPage"
                 ref="table"
@@ -147,6 +147,20 @@
                             </div>
                         </b-field>
                     </b-table-column>
+                </template>
+                 <!-- isEmpty -->
+                <template slot="empty">
+                    <section class="section">
+                        <div class="content has-text-grey has-text-centered">
+                            <p>
+                                <b-icon
+                                    icon="emoticon-sad"
+                                    size="is-large">
+                                </b-icon>
+                            </p>
+                            <p>Rien par ici.</p>
+                        </div>
+                    </section>
                 </template>
             </b-table>
         </section>
@@ -179,10 +193,14 @@ export default {
                 name:'',
             },
             search:'',
+            isEmpty: false
         }
     },
     computed: {
         filterLocations(){
+            if (!this.locations){
+                this.isEmpty = true
+            }
             return this.locations.filter((locations)=>{
                 return locations.name.match(this.search)
             })

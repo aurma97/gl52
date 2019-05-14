@@ -120,7 +120,7 @@
 
             <b-table
                 v-if="isAddType == false"
-                :data="filterTypes"
+                :data="isEmpty ? [] : filterTypes"
                 :paginated="isPaginated"
                 :per-page="perPage"
                 ref="table"
@@ -147,6 +147,20 @@
                             </div>
                         </b-field>
                     </b-table-column>
+                </template>
+                 <!-- isEmpty -->
+                <template slot="empty">
+                    <section class="section">
+                        <div class="content has-text-grey has-text-centered">
+                            <p>
+                                <b-icon
+                                    icon="emoticon-sad"
+                                    size="is-large">
+                                </b-icon>
+                            </p>
+                            <p>Rien par ici.</p>
+                        </div>
+                    </section>
                 </template>
             </b-table>
         </section>
@@ -178,7 +192,8 @@ export default {
             newType:{
                 title:'',
             }, 
-            search:''
+            search:'',
+            isEmpty: false,
         }
     },
     computed: {
@@ -186,6 +201,9 @@ export default {
             return this.$store.state.typeEquipment.types
         },
         filterTypes(){
+            if (!this.types){
+                this.isEmpty = true
+            }
             return this.types.filter((types)=>{
                 return types.title.match(this.search)
             })
