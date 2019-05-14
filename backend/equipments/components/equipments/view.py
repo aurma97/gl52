@@ -23,6 +23,7 @@ class EquipmentCreateView(mixins.CreateModelMixin, generics.ListAPIView):
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
+
 #Update and Delete and Equipement
 class EquipmentUdView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'

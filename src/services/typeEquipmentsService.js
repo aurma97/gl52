@@ -5,20 +5,20 @@ export default {
     return api.get(`type-of-equipments/`)
               .then(response => response.data)
   },
-  fetchOneTypeEquipment() {
-    return api.get(`type-of-equipments/show/${msgId}`)
+  fetchOneTypeEquipment(id) {
+    return api.get(`type-of-equipments/show/${id}`)
               .then(response => response.data)
   },
   postTypeEquipment(payload) {
     return api.post(`type-of-equipments/`, payload)
               .then(response => response.data)
   },
-  updateTypeEquipment(msgId) {
-    return api.delete(`type-of-equipments/update-or-delete/${msgId}`, payload)
+  updateTypeEquipment(payload) {
+    return api.put(`type-of-equipments/update-or-delete/${payload.id}`, payload)
               .then(response => response.data)
   },
-  deleteTypeEquipment(msgId) {
-    return api.delete(`type-of-equipments/update-or-delete/${msgId}`)
+  deleteTypeEquipment(id) {
+    return api.delete(`type-of-equipments/update-or-delete/${id}`)
               .then(response => response.data)
   }
 }

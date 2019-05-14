@@ -5,7 +5,7 @@ export default {
     return api.get(`location/`)
               .then(response => response.data)
   },
-  fetchOneLocation() {
+  fetchOneLocation(id) {
     return api.get(`location/show/${id}`)
               .then(response => response.data)
   },
@@ -13,8 +13,8 @@ export default {
     return api.post(`location/`, payload)
               .then(response => response.data)
   },
-  updateLocation(id) {
-    return api.delete(`location/update-or-delete/${id}`, payload)
+  updateLocation(payload) {
+    return api.put(`location/update-or-delete/${payload.id}`, payload)
               .then(response => response.data)
   },
   deleteLocation(id) {

@@ -1,15 +1,10 @@
 <template>
     <div class="container">
         <hr>
-
-        <!-- Breadcrumb -->
-
-        
-
         <b-tabs position="is-centered" class="block">
             <!-- Gestion des équipements -->
             <b-tab-item label="Les équipements">
-
+                <!-- Breadcrumb -->
                 <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">     
                     <div v-if="!isComponentModalActive">
                         <ul v-if="showEquipment">
@@ -22,7 +17,6 @@
                             <li class="is-active"><a href="#">Gestion des équipements</a></li>
                         </ul>
                     </div>
-                    
                     <ul v-if="isComponentModalActive">
                         <li><router-link to="/">Accueil</router-link></li>
                         <li><a href="#">Gestion des équipements</a></li>
@@ -302,184 +296,189 @@
             </b-tab-item>
             <!-- Gestion des types d'équipements -->
             <b-tab-item label="Gestion des types d'équipements">
-
+                <type-equipment></type-equipment>
             </b-tab-item>
             <!-- Gestion des localisations -->
             <b-tab-item label="Gestion des localisations">
-
+                <location></location>
             </b-tab-item>
         </b-tabs>
     </div>
 </template>
 
 <script>
-    //const data = require('@/data/sample.json')
+import typeEquipment from './typeEquipment.vue'
+import Location from './Location.vue'
 import { mapState, mapActions } from 'vuex'
 
-    export default {
-        data() {
-            return {
-                data:[],
-                idEqToDel:'',
-                error: false, 
-                isPaginated: true,
-                isPaginationSimple: false,
-                defaultSortDirection: 'asc',
-                currentPage: 1,
-                perPage: 5,
-                defaultOpenedDetails: [1],
-                showDetailIcon: true,
-                isDelete: false,
-                isComponentModalActive: false,
-                showEquipment: false,
-                date: new Date(),
-                equipment:{
-                    id: '',
-                    name: '',
-                    date_purchase: '',
-                    description: '',
-                    use_cond: '',
-                    last_check: '',
-                    type_id: '',
-                    location: ''
-                },
-                isLoading: false,
-                isFullPage: true,
-                errors:''
+export default {
+    components:{
+        'type-equipment': typeEquipment,
+        'location': Location
+    },
+    data() {
+        return {
+            data:[],
+            idEqToDel:'',
+            error: false, 
+            isPaginated: true,
+            isPaginationSimple: false,
+            defaultSortDirection: 'asc',
+            currentPage: 1,
+            perPage: 5,
+            defaultOpenedDetails: [1],
+            showDetailIcon: true,
+            isDelete: false,
+            isComponentModalActive: false,
+            showEquipment: false,
+            date: new Date(),
+            equipment:{
+                id: '',
+                name: '',
+                date_purchase: '',
+                description: '',
+                use_cond: '',
+                last_check: '',
+                type_id: '',
+                location: ''
+            },
+            isLoading: false,
+            isFullPage: true,
+            errors:''
+        }
+    },
+    computed: mapState({
+        equipments: state => state.equipments.equipments,
+        equipmentOne: state => state.equipments.equipment,
+        types: state => state.equipments.types,
+        locations: state => state.equipments.locations
+    }),
+    methods: {
+        addEquipment(){
+            this.$store.dispatch('equipments/addEquipment', this.equipment)
+            this.errors = this.$store.dispatch('equipments/getErrors')
+            // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
+            // console.log(error)
+            if(this.errors == 400 | this.errors == 500){
+                this.$notification.open({
+                    duration: 500,
+                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                })
             }
-        },
-        computed: mapState({
-            equipments: state => state.equipments.equipments,
-            equipmentOne: state => state.equipments.equipment,
-            types: state => state.equipments.types,
-            locations: state => state.equipments.locations
-        }),
-        methods: {
-            addEquipment(){
-                this.$store.dispatch('equipments/addEquipment', this.equipment)
-                this.errors = this.$store.dispatch('equipments/getErrors')
-                // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
-                // console.log(error)
-                if(this.errors == 400){
-                    this.$notification.open({
-                        duration: 500,
-                        message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    })
-                }
-                else{
-                    this.isLoading = true
-                    setTimeout(() => {
-                        this.$store.dispatch('equipments/getEquipments');
-                        //location.reload()
-                        this.$el.textContent
-                        this.isLoading = false
-                        this.showEquipment = false
-                        this.isComponentModalActive = false
-                        this.$notification.open({
-                            duration: 5000,
-                            message: `Enregistrement effectué avec succès`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        })
-                    }, 500)   
-                }
-            },
-            getEquipment(payload){
-                this.$store.dispatch('equipments/getEquipment', payload)
-
-                this.equipment.id = this.equipmentOne.id
-                this.equipment.name = this.equipmentOne.name
-                this.equipment.date_purchase = this.equipmentOne.date_purchase
-                this.equipment.description = this.equipmentOne.description
-                this.equipment.use_cond = this.equipmentOne.use_cond
-                this.equipment.last_check = this.equipmentOne.last_check
-                this.equipment.type_id = this.equipmentOne.type_id.id
-                this.equipment.location = this.equipmentOne.location.id
-            },
-            callDelete(id){
-                this.idEqToDel = id
-                this.isDelete = true
-            },
-            deleteEquipment(payload){
-                this.$store.dispatch('equipments/deleteEquipment', payload)
-                this.isDelete = false
-                this.errors = this.$store.dispatch('equipments/getErrors')
-                console.log(this.errors)
-                if(this.errors == 200){
-                    setTimeout(() => {
-                        this.$store.dispatch('equipments/getEquipments');
-                        //location.reload()
-                        this.$el.textContent
-                        this.isDelete = false
-                        this.isLoading = false
-                        this.showEquipment = false
-                        this.isComponentModalActive = false
-                        this.$notification.open({
-                            duration: 5000,
-                            message: `Suppression effectuée avec succès`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        })
-                    }, 500)   
-                }
-                else
-                {
+            else{
+                this.isLoading = true
+                setTimeout(() => {
+                    this.$store.dispatch('equipments/getEquipments');
+                    //location.reload()
+                    this.$el.textContent
+                    this.isLoading = false
+                    this.showEquipment = false
+                    this.isComponentModalActive = false
                     this.$notification.open({
                         duration: 5000,
-                        message: `Suppression impossible, l'équipement est utilisé par une réservation`,
+                        message: `Enregistrement effectué avec succès`,
                         position: 'is-bottom-right',
-                        type: 'is-danger',
+                        type: 'is-success',
                         hasIcon: true
                     })
-                }
-            },
-            updateEquipment(payload){
-                this.$store.dispatch('equipments/updateEquipment', payload)
-                this.errors = this.$store.dispatch('equipments/getErrors')
-                if(this.errors == 0){
-                    this.$notification.open({
-                        duration: 20000,
-                        message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    })
-                }
-                else
-                {
-                    this.isLoading = true
-                    setTimeout(() => {
-                        this.$store.dispatch('equipments/getEquipments');
-                        //location.reload()
-                        this.$el.textContent
-                        this.isLoading = false
-                        this.showEquipment = false
-                        this.$notification.open({
-                            duration: 5000,
-                            message: `Mise à jour effectuée avec succès`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        })
-                    }, 500)
-                    
-                }
-            }
-            ,
-            //Pour la liste déroulante de description
-            toggle(row) {
-                this.$refs.table.toggleDetails(row)
+                }, 500)   
             }
         },
-        created() {
-            this.$store.dispatch('equipments/getEquipments');
-            this.$store.dispatch('equipments/getTypes');
-            this.$store.dispatch('equipments/getLocations');
+        getEquipment(payload){
+            this.$store.dispatch('equipments/getEquipment', payload)
+
+            this.equipment.id = this.equipmentOne.id
+            this.equipment.name = this.equipmentOne.name
+            this.equipment.date_purchase = this.equipmentOne.date_purchase
+            this.equipment.description = this.equipmentOne.description
+            this.equipment.use_cond = this.equipmentOne.use_cond
+            this.equipment.last_check = this.equipmentOne.last_check
+            this.equipment.type_id = this.equipmentOne.type_id.id
+            this.equipment.location = this.equipmentOne.location.id
+        },
+        callDelete(id){
+            this.idEqToDel = id
+            this.isDelete = true
+        },
+        deleteEquipment(payload){
+            this.$store.dispatch('equipments/deleteEquipment', payload)
+            this.isDelete = false
+            this.errors = this.$store.dispatch('equipments/getErrors')
+            console.log(this.errors)
+            if(this.errors != 400 | this.erros != 500){
+                setTimeout(() => {
+                    this.$store.dispatch('equipments/getEquipments');
+                    //location.reload()
+                    this.$el.textContent
+                    this.isDelete = false
+                    this.isLoading = false
+                    this.showEquipment = false
+                    this.isComponentModalActive = false
+                    this.$notification.open({
+                        duration: 5000,
+                        message: `Suppression effectuée avec succès`,
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    })
+                }, 500)   
+            }
+            else
+            {
+                this.$notification.open({
+                    duration: 5000,
+                    message: `Suppression impossible, l'équipement est utilisé par une réservation`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                })
+            }
+        },
+        updateEquipment(payload){
+            this.$store.dispatch('equipments/updateEquipment', payload)
+            this.errors = this.$store.dispatch('equipments/getErrors')
+            if(this.errors == 400 | this.errors == 500){
+                this.$notification.open({
+                    duration: 20000,
+                    message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                })
+            }
+            else
+            {
+                this.isLoading = true
+                setTimeout(() => {
+                    this.$store.dispatch('equipments/getEquipments');
+                    //location.reload()
+                    this.$el.textContent
+                    this.isLoading = false
+                    this.showEquipment = false
+                    this.$notification.open({
+                        duration: 5000,
+                        message: `Mise à jour effectuée avec succès`,
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    })
+                }, 500)
+                
+            }
         }
+        ,
+        //Pour la liste déroulante de description
+        toggle(row) {
+            this.$refs.table.toggleDetails(row)
+        }
+    },
+    created() {
+        this.$store.dispatch('equipments/getEquipments');
+        this.$store.dispatch('equipments/getTypes');
+        this.$store.dispatch('equipments/getLocations');
     }
+}
 </script>

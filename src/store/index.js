@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import messages from './modules/messages'
 import equipments from './modules/equipments'
+import typeEquipment from './modules/typeEquipment'
+import location from './modules/location'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    equipments
+    equipments,
+    typeEquipment,
+    location
   }
 })
