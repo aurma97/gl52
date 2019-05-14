@@ -20,7 +20,7 @@
         </nav>
 
 
-  <!-- Ajout d'un type -->
+        <!-- Ajout d'un type -->
 
         <template v-if="isAddType">
             <section>
@@ -99,6 +99,9 @@
             </div>
             
             <hr>
+             <b-field label="Filtre par type d'équipement">
+                <b-input v-model="search"></b-input>                               
+            </b-field>
             <b-field grouped group-multiline v-if="isAddType == false">
                 <b-select v-model="defaultSortDirection">
                     <option value="asc">Tri: Croissant</option>
@@ -117,7 +120,7 @@
 
             <b-table
                 v-if="isAddType == false"
-                :data="types"
+                :data="filterTypes"
                 :paginated="isPaginated"
                 :per-page="perPage"
                 ref="table"
@@ -174,13 +177,23 @@ export default {
             errors:'',
             newType:{
                 title:'',
-            }
+            }, 
+            search:''
         }
     },
-    computed: mapState({
-        types: state => state.typeEquipment.types,
-        type: state => state.typeEquipment.type
-    }),
+    computed: {
+        types(){
+            return this.$store.state.typeEquipment.types
+        },
+        filterTypes(){
+            return this.types.filter((types)=>{
+                return types.title.match(this.search)
+            })
+        }, 
+        type(){
+            return this.$store.state.typeEquipment.type
+        }
+    },
     methods: {
         addType(){
             this.$store.dispatch('typeEquipment/addType', this.newType)

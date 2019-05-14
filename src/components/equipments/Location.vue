@@ -98,6 +98,9 @@
             </div>
             
             <hr>
+            <b-field label="Filtre par nom de position">
+                <b-input v-model="search"></b-input>                               
+            </b-field>
             <b-field grouped group-multiline v-if="isAddLocation == false">
                 <b-select v-model="defaultSortDirection">
                     <option value="asc">Tri: Croissant</option>
@@ -116,7 +119,7 @@
 
             <b-table
                 v-if="isAddLocation == false"
-                :data="locations"
+                :data="filterLocations"
                 :paginated="isPaginated"
                 :per-page="perPage"
                 ref="table"
@@ -127,7 +130,8 @@
                 aria-next-label="Page suivante"
                 aria-previous-label="Page précedente"
                 aria-page-label="Page"
-                aria-current-label="Page actuelle">
+                aria-current-label="Page actuelle"
+                searchable>
 
                 <template slot-scope="props">
                     <b-table-column field="name" label="Libellé" sortable>
@@ -173,13 +177,23 @@ export default {
             errors:'',
             newLocation:{
                 name:'',
-            }
+            },
+            search:'',
         }
     },
-    computed: mapState({
-        locations: state => state.location.locations,
-        location: state => state.location.location
-    }),
+    computed: {
+        filterLocations(){
+            return this.locations.filter((locations)=>{
+                return locations.name.match(this.search)
+            })
+        }, 
+        locations(){
+            return this.$store.state.location.locations
+        },
+        location(){
+            return this.$store.state.location.location
+        }
+    },
     methods: {
         addLocation(){
             this.$store.dispatch('location/addLocation', this.newLocation)

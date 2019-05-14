@@ -9,6 +9,7 @@ import 'buefy/dist/buefy.css'
 
 Vue.use(Buefy)
 
+
 Vue.config.productionTip = false
 
 // Vue.use(VueRouter)

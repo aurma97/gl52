@@ -189,6 +189,9 @@
                     </div>
                     
                     <hr>
+                    <b-field label="Filtre par nom d'équipement">
+                        <b-input v-model="search"></b-input>                               
+                    </b-field>
                     <b-field grouped group-multiline v-if="isComponentModalActive == false">
                         <b-select v-model="defaultSortDirection">
                             <option value="asc">Tri: Croissant</option>
@@ -203,19 +206,14 @@
                         <div class="control is-flex">
                             <b-switch v-model="isPaginated">Pagination</b-switch>
                         </div>
-                        <div class="control is-flex">
-                            <b-switch v-model="isPaginationSimple" :disabled="!isPaginated">Pagination simple</b-switch>
+                        <div class="control">
+                            <b-switch v-model="showDetailIcon">Détail des équipements</b-switch>
                         </div>
-                        <b-field grouped group-multiline>
-                            <div class="control">
-                                <b-switch v-model="showDetailIcon">Détail des équipements</b-switch>
-                            </div>
-                        </b-field>
                     </b-field>
 
                     <b-table
                         v-if="isComponentModalActive == false"
-                        :data="equipments"
+                        :data="filterEquipments"
                         :paginated="isPaginated"
                         :per-page="perPage"
                         :opened-detailed="defaultOpenedDetails"
@@ -292,6 +290,8 @@
                         </template>
                         
                     </b-table>
+
+                    
                 </section>
             </b-tab-item>
             <!-- Gestion des types d'équipements -->
@@ -344,15 +344,29 @@ export default {
             },
             isLoading: false,
             isFullPage: true,
-            errors:''
+            errors:'',
+            search:'',
         }
     },
-    computed: mapState({
-        equipments: state => state.equipments.equipments,
-        equipmentOne: state => state.equipments.equipment,
-        types: state => state.equipments.types,
-        locations: state => state.equipments.locations
-    }),
+    computed:{
+        filterEquipments(){
+            return this.equipments.filter((equipment)=>{
+                return equipment.name.match(this.search)
+            })
+        }, 
+        equipments(){
+            return this.$store.state.equipments.equipments
+        },
+        equipmentOne(){
+            return this.$store.state.equipments.equipment
+        },
+        types(){
+            return this.$store.state.equipments.types
+        },
+        locations(){
+            return this.$store.state.equipments.locations
+        }
+    },
     methods: {
         addEquipment(){
             this.$store.dispatch('equipments/addEquipment', this.equipment)
@@ -473,7 +487,7 @@ export default {
         //Pour la liste déroulante de description
         toggle(row) {
             this.$refs.table.toggleDetails(row)
-        }
+        },
     },
     created() {
         this.$store.dispatch('equipments/getEquipments');
