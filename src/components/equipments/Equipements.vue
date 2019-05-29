@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" @mouseenter="refresh">
         <hr>
         <hr>
         <b-tabs position="is-centered" class="block">
@@ -7,22 +7,29 @@
             <b-tab-item label="Les équipements">
                 <!-- Breadcrumb -->
                 <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">     
-                    <div v-if="!isComponentModalActive">
-                        <ul v-if="showEquipment">
-                            <li><router-link to="/">Accueil</router-link></li>
-                            <li @click="showEquipment = false"><a>Gestion des équipements</a></li>
-                            <li class="is-active"><a href="#" aria-current="page">Modification de {{equipment.name}}</a></li>
-                        </ul>
-                        <ul v-if="!showEquipment">
-                            <li><router-link to="/">Accueil</router-link></li>
-                            <li class="is-active"><a href="#">Gestion des équipements</a></li>
-                        </ul>
+                    <div class="level">
+                        <div class="level-left">
+                            <div v-if="!isComponentModalActive">
+                                <ul v-if="showEquipment">
+                                    <li><router-link to="/">Accueil</router-link></li>
+                                    <li @click="showEquipment = false"><a>Gestion des équipements</a></li>
+                                    <li class="is-active"><a href="#" aria-current="page">Modification de {{equipment.name}}</a></li>
+                                </ul>
+                                <ul v-if="!showEquipment">
+                                    <li><router-link to="/">Accueil</router-link></li>
+                                    <li class="is-active"><a href="#">Gestion des équipements</a></li>
+                                </ul>
+                            </div>
+                            <ul v-if="isComponentModalActive">
+                                <li><router-link to="/">Accueil</router-link></li>
+                                <li><a href="#">Gestion des équipements</a></li>
+                                <li class="is-active"><a href="#">Ajout d'un équipement</a></li>
+                            </ul>
+                        </div> 
+                        <div class="level-right">
+                            <button class="button is-link" @click="refresh">Actualiser</button>
+                        </div>
                     </div>
-                    <ul v-if="isComponentModalActive">
-                        <li><router-link to="/">Accueil</router-link></li>
-                        <li><a href="#">Gestion des équipements</a></li>
-                        <li class="is-active"><a href="#">Ajout d'un équipement</a></li>
-                    </ul>
                 </nav>
 
                 <!-- Ajout d'un équipement -->
@@ -167,13 +174,20 @@
                 <section v-if="!showEquipment">
                     <hr>
 
+                    <article class="message is-warning" v-if="types.length == 0 || locations.length == 0">
+                        <div class="message-body has-text-centered">
+                            Veuillez ajouter un <strong>Type d'équipement</strong> et une <strong>localisation</strong> pour pouvoir rajouter un équipement <hr>
+                        </div>
+                    </article>
+                  
                     <div class="columns">
-                        <div class="column is-2">
+                        <div class="column is-2" v-if="types.length != 0 & locations.length != 0">
                             <b-button
                                 v-if="isComponentModalActive == false"
                                 icon-left="plus" @click="isComponentModalActive = true">
                                 Ajouter un équipement
                             </b-button>
+                            
                         </div>
                         <div class="column">
                             <!-- Confirmation suppression -->
@@ -309,7 +323,7 @@
                 </section>
             </b-tab-item>
             <!-- Gestion des types d'équipements -->
-            <b-tab-item label="Gestion des types d'équipements">
+            <b-tab-item label="Gestion des types d'équipements" >
                 <type-equipment></type-equipment>
             </b-tab-item>
             <!-- Gestion des localisations -->
@@ -386,6 +400,19 @@ export default {
         }
     },
     methods: {
+        refresh(){
+            this.$store.dispatch('equipments/getEquipments');
+            this.$store.dispatch('equipments/getTypes');
+            this.$store.dispatch('equipments/getLocations');
+            // this.$notification.open({
+            //     duration: 3000,
+            //     message: `Liste actualisée avec succès`,
+            //     position: 'is-bottom-right',
+            //     type: 'is-success',
+            //     hasIcon: true
+            // })
+        },
+
         addEquipment(){
             this.$store.dispatch('equipments/addEquipment', this.equipment)
             this.errors = this.$store.dispatch('equipments/getErrors')
@@ -440,7 +467,7 @@ export default {
             this.$store.dispatch('equipments/deleteEquipment', payload)
             this.isDelete = false
             this.errors = this.$store.dispatch('equipments/getErrors')
-            console.log(this.errors)
+            //console.log(this.errors)
             if(this.errors != 400 | this.erros != 500){
                 setTimeout(() => {
                     this.$store.dispatch('equipments/getEquipments');

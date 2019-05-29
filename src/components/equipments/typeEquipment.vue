@@ -99,8 +99,8 @@
             </div>
             
             <hr>
-             <b-field label="Filtre par type d'équipement">
-                <b-input v-model="search"></b-input>                               
+             <b-field label="Filtre par type d'équipement" v-if="isShowType"
+                <b-input v-model="search" v-if="isShowType"></b-input>                               
             </b-field>
             <b-field grouped group-multiline v-if="isAddType == false">
                 <b-select v-model="defaultSortDirection">

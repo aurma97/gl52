@@ -36,14 +36,18 @@ Before getting started you should have the following installed and running:
 ## Setup Template
 
 ```
-$ git clone https://github.com/gtalarico/django-vue-template
-$ cd django-vue-template
+$ git clone https://github.com/aurma97/gl52
+$ cd gl52
 ```
 
 Setup
 ```
-$ yarn install
+$ apt-get install python3-pip
+$ pip3 install pipenv
 $ pipenv install --dev && pipenv shell
+$ ./manage.py requirements.txt
+$ apt-get install npm
+$ npm install
 $ python manage.py migrate
 ```
 
