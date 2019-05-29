@@ -31,7 +31,7 @@
                                 <b-input
                                     type="text"
                                     v-model="newLocation.name"
-                                    placeholder="Nom du type"
+                                    placeholder="Nom de la position"
                                     required>
                                 </b-input>
                             </b-field>
@@ -98,8 +98,8 @@
             </div>
             
             <hr>
-            <b-field label="Filtre par nom de position">
-                <b-input v-model="search"></b-input>                               
+            <b-field label="Filtre par nom de position" v-if="!isAddLocation"
+                <b-input v-model="search" v-if="!isAddLocation"></b-input>                               
             </b-field>
             <b-field grouped group-multiline v-if="isAddLocation == false">
                 <b-select v-model="defaultSortDirection">
@@ -290,7 +290,7 @@ export default {
         updateLocation(payload){
             this.$store.dispatch('location/updateLocation', payload)
             this.errors = this.$store.dispatch('location/getErrors')
-            if(this.errors == 0){
+            if(this.errors == 400 | this.errors == 500){
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,

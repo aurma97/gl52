@@ -106,7 +106,7 @@
 
                 <!-- Modification d'un équipement -->
 
-                <div class="notification" v-if="equipmentOne && showEquipment" >
+                <div class="notification" v-if="equipment && showEquipment" >
                     <h1 class="title is-2">Modification de " {{equipment.name}} " </h1>
                     
                     <div class="columns">
@@ -124,18 +124,18 @@
                         <div class="column">
                             <b-field label="Type d'équipement" type="is-fullwidth">
                                 <b-select placeholder="Select a character" v-model="equipment.type_id">
-                                    <option :value="equipmentOne.type_id.id" selected>
-                                        {{equipmentOne.type_id.title}}
+                                    <option :value="equipment.type_id.id" selected>
+                                        {{equipment.type_id.title}}
                                     </option>
-                                    <option v-for="type in types" v-if="type.title != equipmentOne.type_id.title" :value="type.id">{{type.title}}</option>
+                                    <option v-for="type in types" v-if="type.title != equipment.type_id.title" :value="type.id">{{type.title}}</option>
                                 </b-select>
                             </b-field>
                             <b-field label="Localisation" type="is-fullwidth">
                                 <b-select :placeholder="equipment.location.name" v-model="equipment.location">
-                                    <option :value="equipmentOne.location.id" selected>
-                                        {{equipmentOne.location.name}}
+                                    <option :value="equipment.location.id" selected>
+                                        {{equipment.location.name}}
                                     </option>
-                                    <option v-for="location in locations" v-if="location.name != equipmentOne.location.name" :value="location.id">{{location.name}}</option>
+                                    <option v-for="location in locations" v-if="location.name != equipment.location.name" :value="location.id">{{location.name}}</option>
                                 </b-select>
                             </b-field>
                             <div class="field">
@@ -338,6 +338,7 @@
 import typeEquipment from './typeEquipment.vue'
 import Location from './Location.vue'
 import { mapState, mapActions } from 'vuex'
+import { constants } from 'crypto';
 
 export default {
     components:{
@@ -404,13 +405,6 @@ export default {
             this.$store.dispatch('equipments/getEquipments');
             this.$store.dispatch('equipments/getTypes');
             this.$store.dispatch('equipments/getLocations');
-            // this.$notification.open({
-            //     duration: 3000,
-            //     message: `Liste actualisée avec succès`,
-            //     position: 'is-bottom-right',
-            //     type: 'is-success',
-            //     hasIcon: true
-            // })
         },
 
         addEquipment(){
@@ -448,16 +442,20 @@ export default {
             }
         },
         getEquipment(payload){
-            this.$store.dispatch('equipments/getEquipment', payload)
+            //this.$store.dispatch('equipments/getEquipment', payload)
 
-            this.equipment.id = this.equipmentOne.id
-            this.equipment.name = this.equipmentOne.name
-            this.equipment.date_purchase = this.equipmentOne.date_purchase
-            this.equipment.description = this.equipmentOne.description
-            this.equipment.use_cond = this.equipmentOne.use_cond
-            this.equipment.last_check = this.equipmentOne.last_check
-            this.equipment.type_id = this.equipmentOne.type_id.id
-            this.equipment.location = this.equipmentOne.location.id
+            this.equipment = this.filterEquipments.find(fruit => fruit.id === payload)
+
+            console.log(this.equipment)
+
+            // this.equipment.id = this.equipmentOne.id
+            // this.equipment.name = this.equipmentOne.name
+            // this.equipment.date_purchase = this.equipmentOne.date_purchase
+            // this.equipment.description = this.equipmentOne.description
+            // this.equipment.use_cond = this.equipmentOne.use_cond
+            // this.equipment.last_check = this.equipmentOne.last_check
+            // this.equipment.type_id = this.equipmentOne.type_id.id
+            // this.equipment.location = this.equipmentOne.location.id
         },
         callDelete(id){
             this.idEqToDel = id
@@ -498,6 +496,7 @@ export default {
             }
         },
         updateEquipment(payload){
+            console.log(payload)
             this.$store.dispatch('equipments/updateEquipment', payload)
             this.errors = this.$store.dispatch('equipments/getErrors')
             if(this.errors == 400 | this.errors == 500){
@@ -526,7 +525,6 @@ export default {
                         hasIcon: true
                     })
                 }, 500)
-                
             }
         }
         ,

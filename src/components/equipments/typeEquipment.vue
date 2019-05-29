@@ -248,7 +248,7 @@ export default {
         },
         getType(payload){
             this.$store.dispatch('typeEquipment/getType', payload)
-            console.log(this.type)
+            //console.log(this.type)
         },
         callDelete(id){
             this.idEqToDel = id
@@ -258,7 +258,7 @@ export default {
             this.$store.dispatch('typeEquipment/deleteType', payload)
             this.isDelete = false
             this.errors = this.$store.dispatch('typeEquipment/getErrors')
-            console.log(this.errors)
+            //console.log(this.errors)
             if(this.errors != 400 | this.errors !=500){
                 setTimeout(() => {
                     this.$store.dispatch('typeEquipment/getTypes');       

@@ -31,7 +31,7 @@ class EquipmentUdView(generics.RetrieveUpdateDestroyAPIView):
     pass
 
     def get_queryset(self):
-        post = Equipments.objects.all().select_related('location').select_related('type_id')
+        post = Equipments.objects.all()
         return post
 
 
