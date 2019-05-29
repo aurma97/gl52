@@ -124,18 +124,18 @@
                         <div class="column">
                             <b-field label="Type d'équipement" type="is-fullwidth">
                                 <b-select placeholder="Select a character" v-model="equipment.type_id">
-                                    <option :value="equipment.type_id.id" selected>
-                                        {{equipment.type_id.title}}
+                                    <option :value="equipmentOne.type_id.id" selected>
+                                        {{equipmentOne.type_id.title}}
                                     </option>
-                                    <option v-for="type in types" v-if="type.title != equipment.type_id.title" :value="type.id">{{type.title}}</option>
+                                    <option v-for="type in types" v-if="type.title != equipmentOne.type_id.title" :value="type.id">{{type.title}}</option>
                                 </b-select>
                             </b-field>
                             <b-field label="Localisation" type="is-fullwidth">
                                 <b-select :placeholder="equipment.location.name" v-model="equipment.location">
-                                    <option :value="equipment.location.id" selected>
-                                        {{equipment.location.name}}
+                                    <option :value="equipmentOne.location.id" selected>
+                                        {{equipmentOne.location.name}}
                                     </option>
-                                    <option v-for="location in locations" v-if="location.name != equipment.location.name" :value="location.id">{{location.name}}</option>
+                                    <option v-for="location in locations" v-if="location.name != equipmentOne.location.name" :value="location.id">{{location.name}}</option>
                                 </b-select>
                             </b-field>
                             <div class="field">
@@ -371,6 +371,7 @@ export default {
                 type_id: '',
                 location: ''
             },
+            equipementOne:[],
             isLoading: false,
             isFullPage: true,
             errors:'',
@@ -390,9 +391,9 @@ export default {
         equipments(){
             return this.$store.state.equipments.equipments
         },
-        equipmentOne(){
-            return this.$store.state.equipments.equipment
-        },
+        // equipmentOne(){
+        //     return this.$store.state.equipments.equipment
+        // },
         types(){
             return this.$store.state.equipments.types
         },
@@ -444,18 +445,18 @@ export default {
         getEquipment(payload){
             //this.$store.dispatch('equipments/getEquipment', payload)
 
-            this.equipment = this.filterEquipments.find(fruit => fruit.id === payload)
+            this.equipmentOne = this.filterEquipments.find(fruit => fruit.id === payload)
 
-            console.log(this.equipment)
+            console.log(this.equipmentOne)
 
-            // this.equipment.id = this.equipmentOne.id
-            // this.equipment.name = this.equipmentOne.name
-            // this.equipment.date_purchase = this.equipmentOne.date_purchase
-            // this.equipment.description = this.equipmentOne.description
-            // this.equipment.use_cond = this.equipmentOne.use_cond
-            // this.equipment.last_check = this.equipmentOne.last_check
-            // this.equipment.type_id = this.equipmentOne.type_id.id
-            // this.equipment.location = this.equipmentOne.location.id
+            this.equipment.id = this.equipmentOne.id
+            this.equipment.name = this.equipmentOne.name
+            this.equipment.date_purchase = this.equipmentOne.date_purchase
+            this.equipment.description = this.equipmentOne.description
+            this.equipment.use_cond = this.equipmentOne.use_cond
+            this.equipment.last_check = this.equipmentOne.last_check
+            this.equipment.type_id = this.equipmentOne.type_id.id
+            this.equipment.location = this.equipmentOne.location.id
         },
         callDelete(id){
             this.idEqToDel = id

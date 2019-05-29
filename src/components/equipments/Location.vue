@@ -192,25 +192,27 @@ export default {
             newLocation:{
                 name:'',
             },
+            location:[],
             search:'',
             isEmpty: false
         }
     },
     computed: {
+        
+        // locations(){
+        //     return this.$store.state.location.locations
+        // },
         filterLocations(){
-            if (!this.locations){
+            if (!this.$store.state.location.locations){
                 this.isEmpty = true
             }
-            return this.locations.filter((locations)=>{
-                return locations.name.match(this.search)
+            return this.$store.state.location.locations.filter((location)=>{
+                return location.name.match(this.search)
             })
-        }, 
-        locations(){
-            return this.$store.state.location.locations
-        },
-        location(){
-            return this.$store.state.location.location
         }
+        // location(){
+        //     return this.$store.state.location.location
+        // }
     },
     methods: {
         addLocation(){
@@ -247,7 +249,9 @@ export default {
             }
         },
         getLocation(payload){
-            this.$store.dispatch('location/getLocation', payload)
+            //this.$store.dispatch('location/getLocation', payload)
+
+            this.location = this.filterLocations.find(fruit => fruit.id === payload)
         },
         callDelete(id){
             this.idEqToDel = id
@@ -290,6 +294,7 @@ export default {
         updateLocation(payload){
             this.$store.dispatch('location/updateLocation', payload)
             this.errors = this.$store.dispatch('location/getErrors')
+
             if(this.errors == 400 | this.errors == 500){
                 this.$notification.open({
                     duration: 20000,
@@ -301,12 +306,11 @@ export default {
             }
             else
             {
-                this.isLoading = true
-                setTimeout(() => {
+                //this.isLoading = true
+            
                     this.$store.dispatch('location/getLocations');
                     //location.reload()
-                    this.$el.textContent
-                    this.isLoading = false
+                    //this.$el.textContent
                     this.isShowLocation = false
                     this.$notification.open({
                         duration: 5000,
@@ -315,7 +319,7 @@ export default {
                         type: 'is-success',
                         hasIcon: true
                     })
-                }, 500)
+              
             }
         }
         ,

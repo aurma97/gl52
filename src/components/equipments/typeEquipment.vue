@@ -192,25 +192,26 @@ export default {
             newType:{
                 title:'',
             }, 
+            type:[],
             search:'',
             isEmpty: false,
         }
     },
     computed: {
-        types(){
-            return this.$store.state.typeEquipment.types
-        },
+        // types(){
+        //     return this.$store.state.typeEquipment.types
+        // },
         filterTypes(){
-            if (!this.types){
+            if (!this.$store.state.typeEquipment.types){
                 this.isEmpty = true
             }
-            return this.types.filter((types)=>{
+            return this.$store.state.typeEquipment.types.filter((types)=>{
                 return types.title.match(this.search)
             })
-        }, 
-        type(){
-            return this.$store.state.typeEquipment.type
         }
+        // type(){
+        //     return this.$store.state.typeEquipment.type
+        // }
     },
     methods: {
         addType(){
@@ -247,8 +248,7 @@ export default {
             }
         },
         getType(payload){
-            this.$store.dispatch('typeEquipment/getType', payload)
-            //console.log(this.type)
+            this.type = this.filterTypes.find(fruit => fruit.id === payload)
         },
         callDelete(id){
             this.idEqToDel = id
@@ -302,8 +302,8 @@ export default {
             }
             else
             {
-                this.isLoading = true
-                setTimeout(() => {
+                //this.isLoading = true
+                //setTimeout(() => {
                     this.$store.dispatch('typeEquipment/getTypes');
                     //location.reload()
                     this.$el.textContent
@@ -316,7 +316,7 @@ export default {
                         type: 'is-success',
                         hasIcon: true
                     })
-                }, 500)
+                //}, 500)
             }
         }
         ,
