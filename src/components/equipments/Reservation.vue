@@ -47,6 +47,8 @@
                                     <b-field label="Période de réservation" aria-required="true">
                                         <date-range-picker v-model="range" :options="options"/>
                                     </b-field>
+                                        <p class="has-text-danger" v-if="validationError">La période sélectionnée est déjà utilisée</p>
+
                                 </div>
                                 <div class="column">
                                     <b-field label="Motif de la réservation">
@@ -318,6 +320,7 @@ export default {
             isUpdate: false,
             showRange: "",
             showStatus:"",
+            validationError: false,
 
             date: new Date(),
 
@@ -375,7 +378,6 @@ export default {
             this.$store.dispatch('reservations/getReservations');
             this.$store.dispatch('equipments/getEquipments');
             this.$store.dispatch('reservations/getErrors')
-
         },
         cancel(){
             this.isAdding = false
@@ -417,58 +419,48 @@ export default {
                 hasIcon: true
             }) 
         },
-        formatDate(date) {
-            var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-
-            return [year, month, day].join('-');
-        },
         addReservation(){
-            //this.errors = this.$store.dispatch('reservations/getErrors')
-            
+   
             this.reservation.start = (this.range[0])
             this.reservation.end = this.range[1]
-
-            var newdate = this.reservation.start.split("-").reverse().join("-");
-
             this.reservation.status = "0";
             this.reservation.user_id = "1";
-            
+            // Validation
+
+            var res = this.getReservationByEquipment(this.reservation.equipment_id)
+            //var res_date = res.start.split(/\//).reverse().join('/');
+            console.log(res.start)
+            var newdate = this.reservation.start.split("/").reverse().join("-");
+
             console.log(newdate)
-            
-            
-            //new Date(moment()).toLocaleDateString()
-            this.$store.dispatch('reservations/addReservation', this.reservation)
-            this.$store.dispatch('reservations/getErrors')
-            this.isLoading = true
-            setTimeout(() => {
-                this.$store.dispatch('reservations/getErrors').then( body => {
-                    console.log(body)
-                    if (body == 400){
-                        this.errorMessage()
-                        this.isLoading = false
-                    }
-                    else{
+            if (res.start == newdate){
+                this.validationError = true
+            }
+            else
+            {
+                this.$store.dispatch('reservations/addReservation', this.reservation)
+                this.$store.dispatch('reservations/getErrors')
+                this.isLoading = true
+                setTimeout(() => {
+                    this.$store.dispatch('reservations/getErrors').then( body => {
+                        if (body == 400){
+                            this.errorMessage()
+                            this.isLoading = false
+                        }
+                        else{
+                        this.resetAll()
+                        this.successMessage()
+                        }
+                        this.errors = this.$store.dispatch('reservations/getErrors')
+                    })            
+                },2000)
+
+                if (this.errors == 201)
+                {
                     this.resetAll()
                     this.successMessage()
-                    }
-                    this.errors = this.$store.dispatch('reservations/getErrors')
-                })            
-            },2000)
-
-            if (this.errors == 201)
-            {
-                this.resetAll()
-                this.successMessage()
+                }
             }
-        },
-        dateToYYYYMMDD(value) {
-            return moment(String(value)).format('MM/DD/YYYY')
         },
         getReservation(payload){
 
@@ -484,6 +476,9 @@ export default {
             this.reservation.motif = this.reservationOne.motif
             this.reservation.equipment_id = this.reservationOne.equipment_id.id
             this.reservation.user_id = this.reservationOne.user_id.id
+        },
+        getReservationByEquipment(id){
+            return this.filterReservations.find(fruit => fruit.equipment_id.id === id)
         },
         callDelete(id){
             this.idEqToDel = id
