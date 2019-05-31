@@ -381,8 +381,9 @@ export default {
                 this.isEmpty = true
             }
             return this.equipments.filter((equipment)=>{
-                if(key.equipment.name)
-                return equipment.name.match(this.search)
+                if(equipment.name){
+                    return equipment.name.match(this.search)
+                }
             })
         }, 
         equipments(){

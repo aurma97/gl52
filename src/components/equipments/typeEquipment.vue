@@ -205,7 +205,7 @@ export default {
                 this.isEmpty = true
             }
             return this.$store.state.typeEquipment.types.filter((types)=>{
-                if(key.types.title)
+                if(types.title)
                 return types.title.match(this.search)
             })
         }

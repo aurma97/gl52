@@ -204,7 +204,7 @@ export default {
                 this.isEmpty = true
             }
             return this.$store.state.location.locations.filter((location)=>{
-                if(key.location.name)
+                if(location.name)
                 return location.name.match(this.search)
             })
         }
