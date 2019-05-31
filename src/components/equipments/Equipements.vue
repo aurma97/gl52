@@ -169,8 +169,6 @@
                 <b-loading :is-full-page="isFullPage" :active.sync="isLoading" :can-cancel="true"></b-loading>
                 
                 <!-- Affichage du tableau des équipements -->
-                
-
                 <section v-if="!showEquipment">
                     <hr>
 
@@ -337,8 +335,6 @@
 <script>
 import typeEquipment from './typeEquipment.vue'
 import Location from './Location.vue'
-import { mapState, mapActions } from 'vuex'
-import { constants } from 'crypto';
 
 export default {
     components:{
@@ -385,6 +381,7 @@ export default {
                 this.isEmpty = true
             }
             return this.equipments.filter((equipment)=>{
+                if(key.equipment.name)
                 return equipment.name.match(this.search)
             })
         }, 
@@ -447,7 +444,7 @@ export default {
 
             this.equipmentOne = this.filterEquipments.find(fruit => fruit.id === payload)
 
-            console.log(this.equipmentOne)
+            //console.log(this.equipmentOne)
 
             this.equipment.id = this.equipmentOne.id
             this.equipment.name = this.equipmentOne.name
@@ -497,7 +494,7 @@ export default {
             }
         },
         updateEquipment(payload){
-            console.log(payload)
+            //console.log(payload)
             this.$store.dispatch('equipments/updateEquipment', payload)
             this.errors = this.$store.dispatch('equipments/getErrors')
             if(this.errors == 400 | this.errors == 500){

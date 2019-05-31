@@ -28,6 +28,9 @@
                         <router-link class="navbar-item" to="/permissions" exact>
                             <i class="fas fa-shield-alt"></i>&nbsp;&nbsp;Permissions
                         </router-link>
+                        <router-link class="navbar-item" to="/reservation" exact>
+                            <i class="fas fa-concierge-bell"></i>&nbsp;&nbsp;Reservation
+                        </router-link>
                         <router-link class="navbar-item" to="/support" exact>
                             <i class="fas fa-life-ring"></i>&nbsp;&nbsp;Support
                         </router-link>

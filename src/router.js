@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/components/Index'
 import Messages from '@/components/Messages'
 import Equipements from '@/components/equipments/Equipements'
+import Reservation from '@/components/equipments/Reservation'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/equipements',
       name: 'equipements',
       component: Equipements
+    },
+    {
+      path: '/reservation',
+      name: 'reservation',
+      component: Reservation
     }
   ]
 })

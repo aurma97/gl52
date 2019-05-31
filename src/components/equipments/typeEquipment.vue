@@ -99,8 +99,8 @@
             </div>
             
             <hr>
-             <b-field label="Filtre par type d'équipement" v-if="isShowType"
-                <b-input v-model="search" v-if="isShowType"></b-input>                               
+             <b-field label="Filtre par type d'équipement" v-if="isShowType">
+                <b-input v-model="search" ></b-input>                               
             </b-field>
             <b-field grouped group-multiline v-if="isAddType == false">
                 <b-select v-model="defaultSortDirection">
@@ -168,7 +168,6 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 export default {
     data() {
         return {
@@ -206,6 +205,7 @@ export default {
                 this.isEmpty = true
             }
             return this.$store.state.typeEquipment.types.filter((types)=>{
+                if(key.types.title)
                 return types.title.match(this.search)
             })
         }

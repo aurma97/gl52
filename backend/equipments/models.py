@@ -26,8 +26,8 @@ class Equipments(models.Model):
     
 class Booked(models.Model):
     id = models.AutoField(primary_key=True)
-    start = models.DateTimeField(auto_now_add=True)
-    end = models.DateTimeField(auto_now=True)
+    start = models.DateField()
+    end = models.DateField() 
     status_choice = (
         ('0', 'En cours'),
         ('1', 'Terminé'),
@@ -36,7 +36,7 @@ class Booked(models.Model):
     motif = models.TextField(max_length=1000, default=None, blank=True, null=True)
     equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT, unique=True)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    patient = models.ForeignKey(Patient, on_delete=models.PROTECT, default=None, blank=True, null=True)
+    #patient = models.ForeignKey(Patient, on_delete=models.PROTECT, default=None, blank=True, null=True)
 
     def __str__(self):
         return str(self.id)

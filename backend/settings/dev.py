@@ -148,3 +148,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_PERMISSION_CLASSES = {
     'rest_framework.permissions.IsAuthenticated'
 }
+REST_FRAMEWORK = {
+    "DATE_INPUT_FORMATS": ["%Y-%m-%d"]
+}

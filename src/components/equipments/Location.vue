@@ -98,9 +98,11 @@
             </div>
             
             <hr>
-            <b-field label="Filtre par nom de position" v-if="!isAddLocation"
-                <b-input v-model="search" v-if="!isAddLocation"></b-input>                               
-            </b-field>
+            <section v-if="!isAddLocation">
+                <b-field label="Filtre par nom de position">
+                    <b-input v-model="search" ></b-input>                               
+                </b-field>
+            </section>
             <b-field grouped group-multiline v-if="isAddLocation == false">
                 <b-select v-model="defaultSortDirection">
                     <option value="asc">Tri: Croissant</option>
@@ -168,7 +170,6 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 export default {
     data() {
         return {
@@ -198,21 +199,15 @@ export default {
         }
     },
     computed: {
-        
-        // locations(){
-        //     return this.$store.state.location.locations
-        // },
         filterLocations(){
             if (!this.$store.state.location.locations){
                 this.isEmpty = true
             }
             return this.$store.state.location.locations.filter((location)=>{
+                if(key.location.name)
                 return location.name.match(this.search)
             })
         }
-        // location(){
-        //     return this.$store.state.location.location
-        // }
     },
     methods: {
         addLocation(){
@@ -261,7 +256,7 @@ export default {
             this.$store.dispatch('location/deleteLocation', payload)
             this.isDelete = false
             this.errors = this.$store.dispatch('location/getErrors')
-            console.log(this.errors)
+            //console.log(this.errors)
             if(this.errors != 400 | this.errors !=500){
                 setTimeout(() => {
                     this.$store.dispatch('location/getLocations');       
