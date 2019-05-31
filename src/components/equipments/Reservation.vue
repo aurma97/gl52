@@ -47,7 +47,7 @@
                                     <b-field label="Période de réservation" aria-required="true">
                                         <date-range-picker v-model="range" :options="options"/>
                                     </b-field>
-                                        <p class="has-text-danger" v-if="validationError">La période sélectionnée est déjà utilisée</p>
+                                        <p class="help has-text-danger" v-if="validationRangeError">L'équipement est déjà réservé pendant cette période.</p>
 
                                 </div>
                                 <div class="column">
@@ -59,6 +59,7 @@
                                             required>
                                         </b-input>
                                     </b-field>
+                                        <p class="help has-text-danger" v-if="validationMotifError">Veuillez spécifier un motif.</p>
                                 </div>
                             </div>
                         </section>
@@ -320,7 +321,10 @@ export default {
             isUpdate: false,
             showRange: "",
             showStatus:"",
-            validationError: false,
+
+            //Validation
+            validationRangeError: false,
+            validationMotifError: false,
 
             date: new Date(),
 
@@ -434,10 +438,21 @@ export default {
 
             console.log(newdate)
             if (res.start == newdate){
-                this.validationError = true
+                this.validationRangeError = true
+            }
+            else if (newdate < res.end ){
+                this.validationMotifError = false                
+                this.validationRangeError = true
+            }
+            else if(!this.reservation.motif){
+                this.validationMotifError = false                
+                this.validationMotifError = true
             }
             else
             {
+                this.validationRangeError = false
+                this.validationMotifError = false                
+                
                 this.$store.dispatch('reservations/addReservation', this.reservation)
                 this.$store.dispatch('reservations/getErrors')
                 this.isLoading = true

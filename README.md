@@ -11,6 +11,8 @@ Winter 2019 - UTBM
 * Vue Router
 * Vuex
 * Gunicorn
+* date-range-picker : http://www.daterangepicker.com/#config
+* Buefy
 
 ### Template Structure
 

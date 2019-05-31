@@ -12,15 +12,16 @@
             <article class="tile is-child box notification is-success">
               <p class="title">Total des équipements</p>
               <div class="content">
-                <h1 class="title is-1">30</h1>
+                <h1 class="title is-1">{{equipments.length}}</h1>
               </div>
             </article>
           </div>
           <div class="tile is-parent">
             <article class="tile is-child notification is-info">
-              <p class="title">Statut des réservations</p>
+              <p class="title">Equipements réservés</p>
               <div class="content">
-                <h1 class="title is-2">12/30</h1>
+                <h1 class="title is-2">{{reservationOk.length}}/{{reservations.length}}</h1>
+                <em v-if="reservationNok.length">Non réservés : {{reservationNok.length}}</em>
               </div>
               <figure class="image is-6by3">
               </figure>
@@ -61,9 +62,27 @@
 
 <script>
 export default {
-  components:{
-    
+  computed:{
+    reservations(){
+      return this.$store.state.reservations.reservations
+    },
+
+    reservationOk(){
+      return this.$store.state.reservations.reservations.filter((key)=>{
+          if(key.status)
+          return key.status.match("0")
+      })
+    },
+    reservationNok(){
+      return this.$store.state.reservations.reservations.filter((key)=>{
+          if(key.status)
+          return key.status.match("1")
+      })
+    },
+
+    equipments(){
+      return this.$store.state.equipments.equipments
+    }
   }
- 
 }
 </script>
