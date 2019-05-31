@@ -123,7 +123,7 @@
                         </div>
                         <div class="column">
                             <b-field label="Type d'équipement" type="is-fullwidth">
-                                <b-select placeholder="Select a character" v-model="equipment.type_id">
+                                <b-select v-model="equipment.type_id">
                                     <option :value="equipmentOne.type_id.id" selected>
                                         {{equipmentOne.type_id.title}}
                                     </option>

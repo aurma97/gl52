@@ -417,13 +417,30 @@ export default {
                 hasIcon: true
             }) 
         },
+        formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        },
         addReservation(){
             //this.errors = this.$store.dispatch('reservations/getErrors')
             
-            this.reservation.start = this.range[0]
+            this.reservation.start = (this.range[0])
             this.reservation.end = this.range[1]
+
+            var newdate = this.reservation.start.split("-").reverse().join("-");
+
             this.reservation.status = "0";
             this.reservation.user_id = "1";
+            
+            console.log(newdate)
+            
             
             //new Date(moment()).toLocaleDateString()
             this.$store.dispatch('reservations/addReservation', this.reservation)
@@ -449,6 +466,9 @@ export default {
                 this.resetAll()
                 this.successMessage()
             }
+        },
+        dateToYYYYMMDD(value) {
+            return moment(String(value)).format('MM/DD/YYYY')
         },
         getReservation(payload){
 

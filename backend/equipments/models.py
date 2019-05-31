@@ -34,7 +34,7 @@ class Booked(models.Model):
     )
     status = models.CharField(max_length=1, choices=status_choice)
     motif = models.TextField(max_length=1000, default=None, blank=True, null=True)
-    equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT, unique=True)
+    equipment_id = models.ForeignKey(Equipments, on_delete=models.PROTECT)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
     #patient = models.ForeignKey(Patient, on_delete=models.PROTECT, default=None, blank=True, null=True)
 

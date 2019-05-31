@@ -149,5 +149,5 @@ DEFAULT_PERMISSION_CLASSES = {
     'rest_framework.permissions.IsAuthenticated'
 }
 REST_FRAMEWORK = {
-    "DATE_INPUT_FORMATS": ["%Y-%m-%d"]
+    "DATE_INPUT_FORMATS": ["%Y-%m-%d", '%d-%m-%Y', '%d/%m/%Y', '%Y/%m/%d']
 }
