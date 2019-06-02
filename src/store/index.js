@@ -4,6 +4,7 @@ import equipments from './modules/equipments'
 import typeEquipment from './modules/typeEquipment'
 import location from './modules/location'
 import reservations from './modules/reservations'
+import users from './modules/users'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     equipments,
     typeEquipment,
     location,
-    reservations
+    reservations,
+    users
   }
 })

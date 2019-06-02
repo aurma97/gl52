@@ -25,7 +25,7 @@
                         <router-link class="navbar-item" to="/equipements" exact>
                             <i class="fas fa-medkit"></i>&nbsp;&nbsp;Equipements
                         </router-link>
-                        <router-link class="navbar-item" to="/permissions" exact>
+                        <router-link class="navbar-item" to="/users" exact>
                             <i class="fas fa-shield-alt"></i>&nbsp;&nbsp;Permissions
                         </router-link>
                         <router-link class="navbar-item" to="/reservation" exact>

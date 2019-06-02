@@ -4,7 +4,7 @@ import Index from '@/components/Index'
 import Messages from '@/components/Messages'
 import Equipements from '@/components/equipments/Equipements'
 import Reservation from '@/components/equipments/Reservation'
-
+import Users from '@/components/Users'
 Vue.use(Router)
 
 export default new Router({
@@ -28,6 +28,11 @@ export default new Router({
       path: '/reservation',
       name: 'reservation',
       component: Reservation
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: Users
     }
   ]
 })
