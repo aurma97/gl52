@@ -149,16 +149,16 @@
         <section v-if="!isUpdate">
             <hr>
 
-            <article class="message is-warning" v-if="!equipments">
+            <article class="message is-warning" v-if="equipments.length == 0">
                 <div class="message-body has-text-centered">
-                    Veuillez ajouter un <strong>Type d'équipement</strong> et une <strong>localisation</strong> pour pouvoir rajouter un équipement
+                    Veuillez ajouter un <strong>équipement</strong> pour pouvoir faire une réservation
                 </div>
             </article>
             
             <div class="columns">
                 <div class="column is-2">
                     <b-button
-                        v-if="isAdding == false"
+                        v-if="isAdding == false && equipments.length != 0"
                         icon-left="plus" @click="isAdding = true">
                         Ajouter une réservation
                     </b-button>

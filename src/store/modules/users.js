@@ -33,6 +33,7 @@ const actions = {
     commit('deleteUser', id)
   },
   addUser({ commit }, user) {
+    console.log(user)
     console.log('user:',user)
     usersService.postUser(user)
       .catch(err => state.errors = err.response.data)
