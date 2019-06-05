@@ -375,6 +375,9 @@ export default {
         },
         equipments(){
             return this.$store.state.equipments.equipments
+        },
+        user(){
+            return this.$store.state.authentication.user
         }
     },
     methods: {
@@ -429,27 +432,28 @@ export default {
             this.reservation.start = (this.range[0])
             this.reservation.end = this.range[1]
             this.reservation.status = "0";
-            this.reservation.user_id = "1";
+            this.reservation.user_id = this.user.id;
             // Validation
 
             var res = this.getReservationByEquipment(this.reservation.equipment_id)
             //var res_date = res.start.split(/\//).reverse().join('/');
-            console.log(res.start)
+            //console.log(res.start)
             var newdate = this.reservation.start.split("/").reverse().join("-");
 
             console.log(newdate)
-            if (res.start == newdate){
-                this.validationRangeError = true
-            }
-            else if (newdate < res.end ){
-                this.validationMotifError = false                
-                this.validationRangeError = true
-            }
-            else if(!this.reservation.motif){
-                this.validationMotifError = false                
-                this.validationMotifError = true
-            }
-            else
+            if (res){
+                if (res.start == newdate){
+                    this.validationRangeError = true
+                }
+                else if (newdate < res.end ){
+                    this.validationMotifError = false                
+                    this.validationRangeError = true
+                }
+                else if(!this.reservation.motif){
+                    this.validationMotifError = false                
+                    this.validationMotifError = true
+                }
+            }else
             {
                 this.validationRangeError = false
                 this.validationMotifError = false                
@@ -477,6 +481,7 @@ export default {
                     this.successMessage()
                 }
             }
+            
         },
         getReservation(payload){
 
@@ -579,6 +584,7 @@ export default {
     created() {
         this.$store.dispatch('reservations/getReservations');
         this.$store.dispatch('equipments/getEquipments');
+        this.$store.dispatch('authentication/getUser');
     }
 }
 </script>

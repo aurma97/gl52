@@ -6,12 +6,12 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from .serializer import UserSerializer
+from .serializer import UserSerializer, UserDetailSerializer
 import json
 
 @api_view(['GET'])
 def current_user(request):
-    serializer = UserSerializer(request.user)
+    serializer = UserDetailSerializer(request.user)
     return Response(serializer.data)
 
 @csrf_exempt
