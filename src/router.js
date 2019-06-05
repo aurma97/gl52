@@ -5,6 +5,8 @@ import Messages from '@/components/Messages'
 import Equipements from '@/components/equipments/Equipements'
 import Reservation from '@/components/equipments/Reservation'
 import Users from '@/components/Users'
+import login from '@/components/accounts/Login.vue';
+import register from '@/components/accounts/Register.vue';
 Vue.use(Router)
 
 export default new Router({
@@ -13,6 +15,14 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Index
+    },
+    { 
+      path: '/connexion', 
+      component:login
+    },
+    { 
+      path: '/inscription', 
+      component:register
     },
     {
       path: '/messages',

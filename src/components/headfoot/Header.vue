@@ -22,28 +22,28 @@
                         </div>
                     </div>
                     <div class="navbar-end">
-                        <router-link class="navbar-item" to="/equipements" exact>
+                        <router-link class="navbar-item" to="/equipements" exact v-if="connected">
                             <i class="fas fa-medkit"></i>&nbsp;&nbsp;Equipements
                         </router-link>
-                        <router-link class="navbar-item" to="/users" exact>
+                        <router-link class="navbar-item" to="/users" exact v-if="connected">
                             <i class="fas fa-shield-alt"></i>&nbsp;&nbsp;Permissions
                         </router-link>
-                        <router-link class="navbar-item" to="/reservation" exact>
+                        <router-link class="navbar-item" to="/reservation" exact v-if="connected">
                             <i class="fas fa-concierge-bell"></i>&nbsp;&nbsp;Reservation
                         </router-link>
-                        <router-link class="navbar-item" to="/support" exact>
+                        <router-link class="navbar-item" to="/support" exact v-if="connected">
                             <i class="fas fa-life-ring"></i>&nbsp;&nbsp;Support
                         </router-link>
 
-                        <!-- <router-link class="navbar-item" to="/connexion">
+                        <router-link class="navbar-item" to="/connexion" v-if="!connected">
                             <i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;Connexion
                         </router-link>
-                        <router-link class="navbar-item" to="/inscription">
+                        <router-link class="navbar-item" to="/inscription" v-if="!connected">
                             <i class="fas fa-file-alt"></i>&nbsp;&nbsp;Inscription
-                        </router-link> -->
-                        <div class="navbar-item has-dropdown is-hoverable" >
+                        </router-link>
+                        <div class="navbar-item has-dropdown is-hoverable" v-if="connected">
                             <a class="navbar-link">
-                                Bonjour {{username}}
+                                Bonjour {{user.username}}
                             </a>
                             <div class="navbar-dropdown">
                                 <router-link class="navbar-item" to="/mon-compte" exact>
@@ -51,7 +51,7 @@
                                 </router-link>
                                 <div class="navbar-divider"></div>
                                 <span class="navbar-item">
-                                    <a class="button is-link is-inverted" exact>
+                                    <a class="button is-link is-inverted" @click="logout" exact>
                                         <span class="icon">
                                         <i class="fas fa-sign-out-alt "></i>
                                         </span>
@@ -76,20 +76,22 @@
 export default {
     data(){
         return{
-            active: false,
-            username: 'Marcel'
+            active: false
         }
     },
-    computed : {
-
-    },
-    created(){
-    },
-    mounted(){
-     
+    computed: {
+        connected (){ 
+          return this.$store.getters['authentication/isLoggedIn']
+        },
+        user(){
+          return this.$store.getters['authentication/user']
+        }
     },
     methods: {
-    
+        logout: function () {
+            this.$store.dispatch('authentication/logout')
+            this.$router.replace('/connexion')
+        },
     }
 }
 </script>

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # < Per Whitenoise, to disable built in
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
     'backend.api',
     'backend.location',
     'backend.equipments',
@@ -143,9 +145,24 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Insert Whitenoise Middleware at top but below Security Middleware
 # MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware',)
 # http://whitenoise.evans.io/en/stable/django.html#make-sure-staticfiles-is-configured-correctly
+
 DEFAULT_PERMISSION_CLASSES = {
     'rest_framework.permissions.IsAuthenticated'
 }
+
 REST_FRAMEWORK = {
-    "DATE_INPUT_FORMATS": ["%Y-%m-%d", '%d-%m-%Y', '%d/%m/%Y', '%Y/%m/%d']
+    "DATE_INPUT_FORMATS": ["%Y-%m-%d", '%d-%m-%Y', '%d/%m/%Y', '%Y/%m/%d'],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
+import datetime 
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
