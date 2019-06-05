@@ -25,9 +25,9 @@
                         <router-link class="navbar-item" to="/equipements" exact v-if="connected">
                             <i class="fas fa-medkit"></i>&nbsp;&nbsp;Equipements
                         </router-link>
-                        <router-link class="navbar-item" to="/users" exact v-if="connected">
+                        <!-- <router-link class="navbar-item" to="/users" exact v-if="connected">
                             <i class="fas fa-shield-alt"></i>&nbsp;&nbsp;Permissions
-                        </router-link>
+                        </router-link> -->
                         <router-link class="navbar-item" to="/reservation" exact v-if="connected">
                             <i class="fas fa-concierge-bell"></i>&nbsp;&nbsp;Reservation
                         </router-link>

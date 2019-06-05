@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-import Messages from '@/components/Messages'
 import Equipements from '@/components/equipments/Equipements'
 import Reservation from '@/components/equipments/Reservation'
-import Users from '@/components/Users'
+//import Users from '@/components/Users'
 import login from '@/components/accounts/Login.vue';
 import register from '@/components/accounts/Register.vue';
+import Accounts from '@/components/accounts/Accounts.vue';
 Vue.use(Router)
 
 export default new Router({
@@ -18,16 +18,15 @@ export default new Router({
     },
     { 
       path: '/connexion', 
-      component:login
+      component: login
     },
     { 
       path: '/inscription', 
-      component:register
+      component: register
     },
-    {
-      path: '/messages',
-      name: 'messages',
-      component: Messages
+    { 
+      path: '/mon-compte', 
+      component: Accounts
     },
     {
       path: '/equipements',
@@ -39,10 +38,10 @@ export default new Router({
       name: 'reservation',
       component: Reservation
     },
-    {
-      path: '/users',
-      name: 'users',
-      component: Users
-    }
+    // {
+    //   path: '/users',
+    //   name: 'users',
+    //   component: Users
+    // }
   ]
 })

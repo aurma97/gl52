@@ -6,7 +6,7 @@
                     Inscription
                 </p>
                 <p class="subtitle">
-                    Veuillez remplir le formulaire ci-dessous pour vous inscrire
+                    Veuillez remplir le formulaire ci-dessous pour vous connecter
                 </p>
                 <p class="subtitle is-5  has-text-danger" v-if="error.length != 0">
                     Problème de connexion avec le serveur                
@@ -116,9 +116,13 @@
 </template>
 
 <script>
+import Forgot from './Forgot.vue'
 import axios from 'axios'
 
 export default {
+    components: {
+        'forgot': Forgot
+    },
     data(){
         return {
             username: null,

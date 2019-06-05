@@ -381,7 +381,8 @@ export default {
         refresh(){
             this.$store.dispatch('reservations/getReservations');
             this.$store.dispatch('equipments/getEquipments');
-            this.$store.dispatch('reservations/getErrors')
+            this.$store.dispatch('reservations/getErrors');
+            this.$store.dispatch('authentication/getUser');
         },
         cancel(){
             this.isAdding = false

@@ -404,6 +404,7 @@ export default {
             this.$store.dispatch('equipments/getEquipments');
             this.$store.dispatch('equipments/getTypes');
             this.$store.dispatch('equipments/getLocations');
+            this.$store.dispatch('authentication/getUser');
         },
 
         addEquipment(){

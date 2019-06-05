@@ -29,9 +29,9 @@
           </div>
           <div class="tile is-parent">
             <article class="tile is-child box notification is-primary">
-              <p class="title">Personnel</p>
+              <p class="title">Membres du personnel</p>
               <div class="content">
-                <h1 class="title is-1">30</h1>
+                <h1 class="title is-1">{{users.length}}</h1>
               </div>
             </article>
           </div>
@@ -82,7 +82,15 @@ export default {
 
     equipments(){
       return this.$store.state.equipments.equipments
+    },
+
+    users(){
+      return this.$store.getters['authentication/users']
     }
+  },
+  created(){
+    this.$store.dispatch('authentication/getUsers')
+    this.$store.dispatch('authentication/getUser');
   }
 }
 </script>
