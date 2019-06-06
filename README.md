@@ -13,6 +13,8 @@ Winter 2019 - UTBM
 * Gunicorn
 * date-range-picker : http://www.daterangepicker.com/#config
 * Buefy
+* VeeValidate
+* FontAwesome
 
 ### Template Structure
 
