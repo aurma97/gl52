@@ -40,61 +40,98 @@
                         <div class="modal-card" style="width: auto">
                             <div>
                                 <section class="modal-card-body">
-                                    <b-field label="Nom">
-                                        <b-input
-                                            type="text"
-                                            v-model="equipment.name"
-                                            placeholder="Nom de l'équipement"
-                                            required>
-                                        </b-input>
-                                    </b-field>
-                                    <div class="field">
-                                        <label class="label">Date d'acquisition</label>
-                                        <div class="control has-icons-right">
-                                            <input class="input" type="date" v-model="equipment.date_purchase">
-                                            <span class="icon is-small is-right">
-                                            <i class="fas fa-calendar"></i>
-                                            </span>
+                                    <div class="columns">
+                                        <div class="column">
+                                            <b-field 
+                                                label="Nom"
+                                                :type="{'is-danger': errors.has('name')}"
+                                                :message="[{'Votre nom est requis': errors.first('name')}]">
+                                                <b-input
+                                                    type="text"
+                                                    name="name"
+                                                    v-model="equipment.name"
+                                                    v-validate="'required'"
+                                                    placeholder="Nom de l'équipement"
+                                                    required>
+                                                </b-input>
+                                            </b-field>
                                         </div>
-                                    </div>
-                                    <div class="field">
-                                        <label class="label">Dernière maintenance</label>
-                                        <div class="control has-icons-right">
-                                            <input class="input" type="date" v-model="equipment.last_check">
-                                            <span class="icon is-small is-right">
-                                            <i class="fas fa-calendar"></i>
-                                            </span>
+                                        <div class="column">
+                                            <div class="field">
+                                                <label class="label">Date d'acquisition</label>
+                                                <div class="control has-icons-right">
+                                                    <input class="input" type="date" name="date_purchase" v-validate="'required'" v-model="equipment.date_purchase" required>
+                                                    <span class="icon is-small is-right">
+                                                    <i class="fas fa-calendar"></i>
+                                                    </span>
+                                                </div>
+                                                <p class="help is-danger" v-if="errors.first('date_purchase')">
+                                                    Une date d'achat doit être entrée.
+                                                </p>
+                                            </div>
                                         </div>
+                                        <!-- <div class="column">
+                                            <div class="field">
+                                                <label class="label">Dernière maintenance</label>
+                                                <div class="control has-icons-right">
+                                                    <input class="input" type="date" v-model="equipment.last_check" required>
+                                                    <span class="icon is-small is-right">
+                                                    <i class="fas fa-calendar"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div> -->
                                     </div>
-                                    <b-field label="Description">
+                                    <b-field 
+                                        label="Description"
+                                        :type="{'is-danger': errors.has('description')}"
+                                        :message="[{'Une description est requise': errors.first('description')}]">
                                         <b-input
                                             type="textarea"
+                                            name="description"
+                                            v-validate="'required'"
                                             v-model="equipment.description"
                                             placeholder="Détails sur l'équipement"
                                             required>
                                         </b-input>
                                     </b-field>
-                                    <b-field label="Conditions d'utilisation">
+                                    <b-field 
+                                        label="Consignes d'utilisation"
+                                        :type="{'is-danger': errors.has('use_cond')}"
+                                        :message="[{'Des consignes doivent être définie': errors.first('use_cond')}]">
                                         <b-input
                                             type="textarea"
+                                            name="use_cond"
+                                            v-validate="'required'"
                                             v-model="equipment.use_cond"                        
                                             required>
                                         </b-input>
                                     </b-field>
-                                    <b-field label="Type d'équipement" type="is-fullwidth">
-                                        <b-select placeholder="Select a character" v-model="equipment.type_id">
-                                            <option v-for="type in types" :value="type.id">{{type.title}}</option>
-                                        </b-select>
-                                    </b-field>
-                                    <b-field label="Localisation" type="is-fullwidth">
-                                        <b-select :placeholder="equipment.location.name" v-model="equipment.location">
-                                            <option v-for="location in locations" :value="location.id">{{location.name}}</option>
-                                        </b-select>
-                                    </b-field>
-                                    
+                                    <div class="columns">
+                                        <div class="column">
+                                            <b-field 
+                                                label="Type d'équipement"
+                                                :type="'is-fullwidth '+{' is-danger': errors.has('type_eq')}"
+                                                :message="[{'Un type d\'équipement est requis': errors.first('type_eq')}]">
+                                                <b-select placeholder="Select a character" name="type_eq" v-validate="'required'" v-model="equipment.type_id" >
+                                                    <option v-for="type in types" :value="type.id">{{type.title}}</option>
+                                                </b-select>
+                                            </b-field>
+                                        </div>
+                                        <div class="column">
+                                            <b-field 
+                                                label="Localisation" 
+                                                :type="'is-fullwidth '+{' is-danger': errors.has('location')}"
+                                                :message="[{'Une localisation est requise.': errors.first('location')}]">
+                                                <b-select :placeholder="equipment.location.name" name="location" v-validate="'required'" v-model="equipment.location">
+                                                    <option v-for="location in locations" :value="location.id">{{location.name}}</option>
+                                                </b-select>
+                                            </b-field>
+                                        </div>
+                                    </div>
                                 </section>
                                 <footer class="modal-card-foot">
-                                    <button class="button is-primary" @click="addEquipment">Valider</button>
+                                    <button class="button is-primary" @click.prevent="addEquipment">Valider</button>
                                     <b-button @click="isComponentModalActive = false">Annuler</b-button>
                                 </footer>
                             </div>
@@ -111,27 +148,62 @@
                     
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Nom de l'équipement">
-                                <b-input v-model="equipment.name"></b-input>
+                            <b-field 
+                                label="Nom"
+                                :type="{'is-danger': errors.has('name')}"
+                                :message="[{'Votre nom est requis': errors.first('name')}]">
+                                <b-input
+                                    type="text"
+                                    name="name"
+                                    v-model="equipment.name"
+                                    v-validate="'required'"
+                                    placeholder="Nom de l'équipement"
+                                    required>
+                                </b-input>
                             </b-field>
-                            <b-field label="Description">
-                                <b-input maxlength="200" v-model="equipment.description" type="textarea"></b-input>
+                           <b-field 
+                                label="Description"
+                                :type="{'is-danger': errors.has('description')}"
+                                :message="[{'Une description est requise': errors.first('description')}]">
+                                <b-input
+                                    type="textarea"
+                                    name="description"
+                                    v-validate="'required'"
+                                    v-model="equipment.description"
+                                    placeholder="Détails sur l'équipement"
+                                    required>
+                                </b-input>
                             </b-field>
-                            <b-field label="Conditions d'utilisation">
-                                <b-input maxlength="100" v-model="equipment.use_cond" type="textarea"></b-input>
+                            <b-field 
+                                label="Consignes d'utilisation"
+                                :type="{'is-danger': errors.has('use_cond')}"
+                                :message="[{'Des consignes doivent être définie': errors.first('use_cond')}]">
+                                <b-input
+                                    type="textarea"
+                                    name="use_cond"
+                                    v-validate="'required'"
+                                    v-model="equipment.use_cond"                        
+                                    required>
+                                </b-input>
                             </b-field>
                         </div>
                         <div class="column">
-                            <b-field label="Type d'équipement" type="is-fullwidth">
-                                <b-select v-model="equipment.type_id">
+                            <b-field 
+                                label="Type d'équipement" 
+                                :type="'is-fullwidth '+{' is-danger': errors.has('type_eq')}"
+                                :message="[{'Un type d\'équipement est requis': errors.first('type_eq')}]">
+                                <b-select name="type_eq" v-validate="'required'" v-model="equipment.type_id">
                                     <option :value="equipmentOne.type_id.id" selected>
                                         {{equipmentOne.type_id.title}}
                                     </option>
                                     <option v-for="type in types" v-if="type.title != equipmentOne.type_id.title" :value="type.id">{{type.title}}</option>
                                 </b-select>
                             </b-field>
-                            <b-field label="Localisation" type="is-fullwidth">
-                                <b-select :placeholder="equipment.location.name" v-model="equipment.location">
+                            <b-field 
+                                label="Localisation" 
+                                :type="'is-fullwidth '+{' is-danger': errors.has('location')}"
+                                :message="[{'Une localisation est requise.': errors.first('location')}]">
+                                <b-select :placeholder="equipment.location.name" name="location" v-validate="'required'" v-model="equipment.location">
                                     <option :value="equipmentOne.location.id" selected>
                                         {{equipmentOne.location.name}}
                                     </option>
@@ -370,7 +442,7 @@ export default {
             equipementOne:[],
             isLoading: false,
             isFullPage: true,
-            errors:'',
+            error_status:'',
             search:'',
             isEmpty: false,
         }
@@ -408,38 +480,43 @@ export default {
         },
 
         addEquipment(){
-            this.$store.dispatch('equipments/addEquipment', this.equipment)
-            this.errors = this.$store.dispatch('equipments/getErrors')
-            // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
-            // console.log(error)
-            if(this.errors == 400 | this.errors == 500){
-                this.$notification.open({
-                    duration: 500,
-                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                })
-            }
-            else{
-                this.isLoading = true
-                this.equipment = []
-                setTimeout(() => {
-                    this.$store.dispatch('equipments/getEquipments');
-                    //location.reload()
-                    this.$el.textContent
-                    this.isLoading = false
-                    this.showEquipment = false
-                    this.isComponentModalActive = false
-                    this.$notification.open({
-                        duration: 5000,
-                        message: `Enregistrement effectué avec succès`,
-                        position: 'is-bottom-right',
-                        type: 'is-success',
-                        hasIcon: true
-                    })
-                }, 500)   
-            }
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    this.equipment.last_check = this.equipment.date_purchase
+                    this.$store.dispatch('equipments/addEquipment', this.equipment)
+                    this.error_status = this.$store.dispatch('equipments/getErrors')
+                    // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
+                    // console.log(error)
+                    if(this.error_status == 400 | this.error_status == 500){
+                        this.$notification.open({
+                            duration: 500,
+                            message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    }
+                    else{
+                        this.isLoading = true
+                        this.equipment = []
+                        setTimeout(() => {
+                            this.$store.dispatch('equipments/getEquipments');
+                            //location.reload()
+                            this.$el.textContent
+                            this.isLoading = false
+                            this.showEquipment = false
+                            this.isComponentModalActive = false
+                            this.$notification.open({
+                                duration: 5000,
+                                message: `Enregistrement effectué avec succès`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            })
+                        }, 500)   
+                    }
+                }
+            })
         },
         getEquipment(payload){
             //this.$store.dispatch('equipments/getEquipment', payload)
@@ -464,9 +541,9 @@ export default {
         deleteEquipment(payload){
             this.$store.dispatch('equipments/deleteEquipment', payload)
             this.isDelete = false
-            this.errors = this.$store.dispatch('equipments/getErrors')
+            this.error_status = this.$store.dispatch('equipments/getErrors')
             //console.log(this.errors)
-            if(this.errors != 400 | this.erros != 500){
+            if(this.error_status != 400 | this.error_status != 500){
                 setTimeout(() => {
                     this.$store.dispatch('equipments/getEquipments');
                     //location.reload()
@@ -496,36 +573,39 @@ export default {
             }
         },
         updateEquipment(payload){
-            //console.log(payload)
-            this.$store.dispatch('equipments/updateEquipment', payload)
-            this.errors = this.$store.dispatch('equipments/getErrors')
-            if(this.errors == 400 | this.errors == 500){
-                this.$notification.open({
-                    duration: 20000,
-                    message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                })
-            }
-            else
-            {
-                this.isLoading = true
-                setTimeout(() => {
-                    this.$store.dispatch('equipments/getEquipments');
-                    //location.reload()
-                    this.$el.textContent
-                    this.isLoading = false
-                    this.showEquipment = false
-                    this.$notification.open({
-                        duration: 5000,
-                        message: `Mise à jour effectuée avec succès`,
-                        position: 'is-bottom-right',
-                        type: 'is-success',
-                        hasIcon: true
-                    })
-                }, 500)
-            }
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    this.$store.dispatch('equipments/updateEquipment', payload)
+                    this.error_status = this.$store.dispatch('equipments/getErrors')
+                    if(this.error_status == 400 || this.error_status == 500){
+                        this.$notification.open({
+                            duration: 20000,
+                            message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    }
+                    else
+                    {
+                        this.isLoading = true
+                        setTimeout(() => {
+                            this.$store.dispatch('equipments/getEquipments');
+                            //location.reload()
+                            this.$el.textContent
+                            this.isLoading = false
+                            this.showEquipment = false
+                            this.$notification.open({
+                                duration: 5000,
+                                message: `Mise à jour effectuée avec succès`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            })
+                        }, 500)
+                    }
+                }
+            })
         }
         ,
         //Pour la liste déroulante de description

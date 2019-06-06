@@ -39,8 +39,11 @@
                         <section class="modal-card-body">
                             <div class="columns">
                                 <div class="column">
-                                    <b-field label="Equipement" type="is-fullwidth">
-                                        <b-select placeholder="Selectionnez l'équipement" v-model="reservation.equipment_id" aria-required="true">
+                                    <b-field 
+                                        label="Equipement" 
+                                        :type="{'is-danger': errors.has('equipment')}"
+                                        :message="[{'Un equipment est requis': errors.first('equipment')}]">
+                                        <b-select placeholder="Selectionnez l'équipement" name="equipment" v-validate="'required'" v-model="reservation.equipment_id" aria-required="true">
                                             <option v-for="equipment in equipments" :value="equipment.id">{{equipment.name}}</option>
                                         </b-select>
                                     </b-field>
@@ -51,10 +54,15 @@
 
                                 </div>
                                 <div class="column">
-                                    <b-field label="Motif de la réservation">
+                                    <b-field 
+                                        label="Motif de la réservation"
+                                        :type="{'is-danger': errors.has('motif')}"
+                                        :message="[{'Un motif est requis': errors.first('motif')}]">
                                         <b-input
                                             type="textarea"
                                             v-model="reservation.motif"
+                                            name="motif" 
+                                            v-validate="'required'"
                                             placeholder="Motif de la réservation"
                                             required>
                                         </b-input>
@@ -64,7 +72,7 @@
                             </div>
                         </section>
                         <footer class="modal-card-foot">
-                            <button class="button is-primary" @click="addReservation">Valider</button>
+                            <button class="button is-primary" @click.prevent="addReservation">Valider</button>
                             <b-button @click="cancel">Annuler</b-button>
                         </footer>
                     </div>
@@ -338,9 +346,13 @@ export default {
                 user_id: ''
             },
             reservationOne:[],
+
+            //For the loading component
             isLoading: false,
             isFullPage: true,
-            errors:'',
+
+            //For errors axios
+            errors_status:'',
             search:'',
             isEmpty: false,
             range: ["",""],
@@ -428,60 +440,59 @@ export default {
             }) 
         },
         addReservation(){
-   
-            this.reservation.start = (this.range[0])
-            this.reservation.end = this.range[1]
-            this.reservation.status = "0";
-            this.reservation.user_id = this.user.id;
-            // Validation
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    this.reservation.start = (this.range[0])
+                    this.reservation.end = this.range[1]
+                    this.reservation.status = "0";
+                    this.reservation.user_id = this.user.id;
+                    // Validation
 
-            var res = this.getReservationByEquipment(this.reservation.equipment_id)
-            //var res_date = res.start.split(/\//).reverse().join('/');
-            //console.log(res.start)
-            var newdate = this.reservation.start.split("/").reverse().join("-");
+                    var res = this.getReservationByEquipment(this.reservation.equipment_id)
+                    var newdate = this.reservation.start.split("/").reverse().join("-");
 
-            console.log(newdate)
-            if (res){
-                if (res.start == newdate){
-                    this.validationRangeError = true
-                }
-                else if (newdate < res.end ){
-                    this.validationMotifError = false                
-                    this.validationRangeError = true
-                }
-                else if(!this.reservation.motif){
-                    this.validationMotifError = false                
-                    this.validationMotifError = true
-                }
-            }else
-            {
-                this.validationRangeError = false
-                this.validationMotifError = false                
-                
-                this.$store.dispatch('reservations/addReservation', this.reservation)
-                this.$store.dispatch('reservations/getErrors')
-                this.isLoading = true
-                setTimeout(() => {
-                    this.$store.dispatch('reservations/getErrors').then( body => {
-                        if (body == 400){
-                            this.errorMessage()
-                            this.isLoading = false
+                    if (res){
+                        if (res.start == newdate){
+                            this.validationRangeError = true
                         }
-                        else{
-                        this.resetAll()
-                        this.successMessage()
+                        else if (newdate < res.end ){
+                            this.validationMotifError = false                
+                            this.validationRangeError = true
                         }
-                        this.errors = this.$store.dispatch('reservations/getErrors')
-                    })            
-                },2000)
+                        else if(!this.reservation.motif){
+                            this.validationMotifError = false                
+                            this.validationMotifError = true
+                        }
+                    }else
+                    {
+                        this.validationRangeError = false
+                        this.validationMotifError = false                
+                        
+                        this.$store.dispatch('reservations/addReservation', this.reservation)
+                        this.$store.dispatch('reservations/getErrors')
+                        this.isLoading = true
+                        setTimeout(() => {
+                            this.$store.dispatch('reservations/getErrors').then( body => {
+                                if (body == 400){
+                                    this.errorMessage()
+                                    this.isLoading = false
+                                }
+                                else{
+                                this.resetAll()
+                                this.successMessage()
+                                }
+                                this.errors_status = this.$store.dispatch('reservations/getErrors')
+                            })            
+                        },2000)
 
-                if (this.errors == 201)
-                {
-                    this.resetAll()
-                    this.successMessage()
+                        if (this.errors_status == 201)
+                        {
+                            this.resetAll()
+                            this.successMessage()
+                        }
+                    }
                 }
-            }
-            
+            })
         },
         getReservation(payload){
 
@@ -508,9 +519,9 @@ export default {
         deleteReservation(payload){
             this.$store.dispatch('reservations/deleteReservation', payload)
             this.isDelete = false
-            this.errors = this.$store.dispatch('reservations/getErrors')
+            this.errors_status = this.$store.dispatch('reservations/getErrors')
             //console.log(this.errors)
-            if(this.errors != 400 | this.erros != 500){
+            if(this.errors_status != 400 | this.errors_status != 500){
                 setTimeout(() => {
                     this.$store.dispatch('reservations/getReservations');
                     //location.reload()
@@ -546,8 +557,8 @@ export default {
 
             console.log(this.reservation.start)
             this.$store.dispatch('reservations/updateReservation', this.reservation)
-            this.errors = this.$store.dispatch('reservations/getErrors')
-            if(this.errors == 400 | this.errors == 500){
+            this.errors_status = this.$store.dispatch('reservations/getErrors')
+            if(this.errors_status == 400 | this.errors_status == 500){
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,

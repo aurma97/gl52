@@ -33,8 +33,7 @@ class EquipmentCreateView(mixins.CreateModelMixin, generics.ListAPIView):
 class EquipmentUdView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     serializer_class = EquipmentsSerializer
-    authentication_classes = (CsrfExempt, BasicAuthentication)
-    pass
+    #authentication_classes = (CsrfExempt, BasicAuthentication)
 
     def get_queryset(self):
         post = Equipments.objects.all()
