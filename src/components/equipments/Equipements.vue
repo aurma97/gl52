@@ -487,7 +487,7 @@ export default {
                     this.error_status = this.$store.dispatch('equipments/getErrors')
                     // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
                     // console.log(error)
-                    if(this.error_status == 400 | this.error_status == 500){
+                    if(this.error_status == 400 || this.error_status == 500){
                         this.$notification.open({
                             duration: 500,
                             message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
@@ -501,7 +501,7 @@ export default {
                         this.equipment = []
                         setTimeout(() => {
                             this.$store.dispatch('equipments/getEquipments');
-                            //location.reload()
+                            //location.re#load()
                             this.$el.textContent
                             this.isLoading = false
                             this.showEquipment = false
@@ -543,7 +543,7 @@ export default {
             this.isDelete = false
             this.error_status = this.$store.dispatch('equipments/getErrors')
             //console.log(this.errors)
-            if(this.error_status != 400 | this.error_status != 500){
+            if(this.error_status != 400 || this.error_status != 500){
                 setTimeout(() => {
                     this.$store.dispatch('equipments/getEquipments');
                     //location.reload()

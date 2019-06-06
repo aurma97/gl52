@@ -453,42 +453,43 @@ export default {
 
                     if (res){
                         if (res.start == newdate){
+                            console.log("1-"+res.start)
+                            console.log("1-"+newdate)
                             this.validationRangeError = true
                         }
                         else if (newdate < res.end ){
+                            console.log("2-"+res.end)
+                            console.log("2-"+newdate)
                             this.validationMotifError = false                
                             this.validationRangeError = true
                         }
-                        else if(!this.reservation.motif){
+                        else
+                        {
+                            this.validationRangeError = false
                             this.validationMotifError = false                
-                            this.validationMotifError = true
-                        }
-                    }else
-                    {
-                        this.validationRangeError = false
-                        this.validationMotifError = false                
-                        
-                        this.$store.dispatch('reservations/addReservation', this.reservation)
-                        this.$store.dispatch('reservations/getErrors')
-                        this.isLoading = true
-                        setTimeout(() => {
-                            this.$store.dispatch('reservations/getErrors').then( body => {
-                                if (body == 400){
-                                    this.errorMessage()
-                                    this.isLoading = false
-                                }
-                                else{
+                            
+                            this.$store.dispatch('reservations/addReservation', this.reservation)
+                            this.$store.dispatch('reservations/getErrors')
+                            this.isLoading = true
+                            setTimeout(() => {
+                                this.$store.dispatch('reservations/getErrors').then( body => {
+                                    if (body == 400){
+                                        this.errorMessage()
+                                        this.isLoading = false
+                                    }
+                                    else{
+                                    this.resetAll()
+                                    this.successMessage()
+                                    }
+                                    this.errors_status = this.$store.dispatch('reservations/getErrors')
+                                })            
+                            },2000)
+
+                            if (this.errors_status == 201)
+                            {
                                 this.resetAll()
                                 this.successMessage()
-                                }
-                                this.errors_status = this.$store.dispatch('reservations/getErrors')
-                            })            
-                        },2000)
-
-                        if (this.errors_status == 201)
-                        {
-                            this.resetAll()
-                            this.successMessage()
+                            }
                         }
                     }
                 }
@@ -521,7 +522,7 @@ export default {
             this.isDelete = false
             this.errors_status = this.$store.dispatch('reservations/getErrors')
             //console.log(this.errors)
-            if(this.errors_status != 400 | this.errors_status != 500){
+            if(this.errors_status != 400 || this.errors_status != 500){
                 setTimeout(() => {
                     this.$store.dispatch('reservations/getReservations');
                     //location.reload()
@@ -558,7 +559,7 @@ export default {
             console.log(this.reservation.start)
             this.$store.dispatch('reservations/updateReservation', this.reservation)
             this.errors_status = this.$store.dispatch('reservations/getErrors')
-            if(this.errors_status == 400 | this.errors_status == 500){
+            if(this.errors_status == 400 || this.errors_status == 500){
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,

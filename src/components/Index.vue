@@ -20,7 +20,7 @@
             <article class="tile is-child notification is-info">
               <p class="title">Equipements réservés</p>
               <div class="content">
-                <h1 class="title is-2">{{reservationOk.length}}/{{reservations.length}}</h1>
+                <h1 class="title is-2">{{reservationOk.length}}</h1>
                 <em v-if="reservationNok.length">Non réservés : {{reservationNok.length}}</em>
               </div>
               <figure class="image is-6by3">

@@ -219,7 +219,7 @@ export default {
             this.newType = { title:''}
             this.errors = this.$store.dispatch('typeEquipment/getErrors')
     
-            if(this.errors == 400 | this.errors == 500){
+            if(this.errors == 400 || this.errors == 500){
                 this.$notification.open({
                     duration: 500,
                     message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
@@ -259,7 +259,7 @@ export default {
             this.isDelete = false
             this.errors = this.$store.dispatch('typeEquipment/getErrors')
             //console.log(this.errors)
-            if(this.errors != 400 | this.errors !=500){
+            if(this.errors != 400 || this.errors !=500){
                 setTimeout(() => {
                     this.$store.dispatch('typeEquipment/getTypes');       
                     //location.reload()

@@ -215,7 +215,7 @@ export default {
             this.newLocation = { name:''}
             this.errors = this.$store.dispatch('location/getErrors')
     
-            if(this.errors == 400 | this.errors == 500){
+            if(this.errors == 400 || this.errors == 500){
                 this.$notification.open({
                     duration: 500,
                     message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
@@ -257,7 +257,7 @@ export default {
             this.isDelete = false
             this.errors = this.$store.dispatch('location/getErrors')
             //console.log(this.errors)
-            if(this.errors != 400 | this.errors !=500){
+            if(this.errors != 400 || this.errors !=500){
                 setTimeout(() => {
                     this.$store.dispatch('location/getLocations');       
                     //location.reload()
@@ -290,7 +290,7 @@ export default {
             this.$store.dispatch('location/updateLocation', payload)
             this.errors = this.$store.dispatch('location/getErrors')
 
-            if(this.errors == 400 | this.errors == 500){
+            if(this.errors == 400 || this.errors == 500){
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
