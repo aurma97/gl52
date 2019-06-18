@@ -7,41 +7,67 @@ import Reservation from '@/components/equipments/Reservation'
 import login from '@/components/accounts/Login.vue';
 import register from '@/components/accounts/Register.vue';
 import Accounts from '@/components/accounts/Accounts.vue';
+import store from '@/store' 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Index
+      component: Index,
+      meta: {
+        requiresAuth: true
+      }
     },
     { 
       path: '/connexion', 
+      name: 'connexion',
       component: login
     },
     { 
-      path: '/inscription', 
+      path: '/inscription',
+      name: 'register', 
       component: register
     },
     { 
       path: '/mon-compte', 
-      component: Accounts
+      component: Accounts,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/equipements',
       name: 'equipements',
-      component: Equipements
+      component: Equipements,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/reservation',
       name: 'reservation',
-      component: Reservation
+      component: Reservation,
+      meta: {
+        requiresAuth: true
+      }
     },
-    // {
-    //   path: '/users',
-    //   name: 'users',
-    //   component: Users
-    // }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!store.getters['authentication/isLoggedIn']) {
+      next({ name: 'connexion' })
+    } else {
+      next() // go to wherever I'm going
+    }
+  } else {
+    next() // does not require auth, make sure to always call next()!
+  }
+})
+
+export default router;

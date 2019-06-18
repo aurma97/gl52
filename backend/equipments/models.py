@@ -5,7 +5,7 @@ from ..patient.models import Patient
 # Create your models here.
 
 class EquipmentType(models.Model):
-    title = models.CharField(default="Aucune catégorie", max_length=100)
+    title = models.CharField(default="Aucune catégorie", max_length=100, unique=True)
 
     def __str__(self):
         return self.title
@@ -13,7 +13,7 @@ class EquipmentType(models.Model):
 #use_cond = condition generale d'utilisation
 #last_check = date de dernière maintenance
 class Equipments(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     date_purchase = models.DateField()
     description = models.TextField(max_length=1000)
     use_cond = models.TextField(max_length = 1000)

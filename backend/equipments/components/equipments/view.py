@@ -29,11 +29,30 @@ class EquipmentCreateView(mixins.CreateModelMixin, generics.ListAPIView):
         return self.update(request, *args, **kwargs)
 
 
-#Update and Delete and Equipement
+#Update an Equipement
 class EquipmentUdView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     serializer_class = EquipmentsSerializer
     #authentication_classes = (CsrfExempt, BasicAuthentication)
+
+    def get_queryset(self):
+        post = Equipments.objects.all()
+        return post
+        
+#Delete an Equipement
+class EquipmentDView(generics.DestroyAPIView):
+    lookup_field = 'pk'
+    serializer_class = EquipmentsSerializer
+    #authentication_classes = (CsrfExempt, BasicAuthentication)
+
+    def get_queryset(self):
+        post = Equipments.objects.all()
+        return post
+
+class EquipmentUView(generics.UpdateAPIView):
+    lookup_field = 'pk'
+    serializer_class = EquipmentsSerializer
+    authentication_classes = (CsrfExempt, BasicAuthentication)
 
     def get_queryset(self):
         post = Equipments.objects.all()

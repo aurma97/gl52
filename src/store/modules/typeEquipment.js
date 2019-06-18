@@ -30,7 +30,7 @@ const actions = {
   },
   addType({ commit }, type) {
     typeEquipmentsService.postTypeEquipment(type)
-    .catch(err => state.errors = err.response.status)
+    .catch(err =>console.log(err))
     .then(() => {
       commit('addType', type)
     })

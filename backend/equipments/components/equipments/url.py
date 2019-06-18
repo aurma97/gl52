@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .view import ListEquipments, EquipmentUdView, EquipmentReadView, EquipmentCreateView
+from .view import ListEquipments, EquipmentUdView, EquipmentUView, EquipmentDView, EquipmentReadView, EquipmentCreateView
 
 urlpatterns = [ 
 
@@ -13,7 +13,9 @@ urlpatterns = [
 
     #Update or Delete specific Equipment
     # url = http://localhost:8000/api/manage/equipments/update-or-delete/1
-    path('update-or-delete/<pk>', EquipmentUdView.as_view()),
+    path('update/<pk>', EquipmentUView.as_view()),
+
+    path('delete/<pk>', EquipmentDView.as_view()),
 
     #Show a specific equipment
     # url = http://localhost:8000/api/manage/equipments/show/1

@@ -1,5 +1,5 @@
 <template>
-    <div class="container" @mouseenter="refresh">
+        <div class="container" @mouseenter="refresh">
         <hr>
         <hr>
         <b-tabs position="is-centered" class="block">
@@ -54,6 +54,7 @@
                                                     placeholder="Nom de l'équipement"
                                                     required>
                                                 </b-input>
+                                                <p v-if="newError" class="help is-danger">Ce nom est déjà utilisé</p>
                                             </b-field>
                                         </div>
                                         <div class="column">
@@ -160,6 +161,7 @@
                                     placeholder="Nom de l'équipement"
                                     required>
                                 </b-input>
+                                <p v-if="newError" class="help is-danger">Ce nom est déjà utilisé</p>
                             </b-field>
                            <b-field 
                                 label="Description"
@@ -253,7 +255,7 @@
                     <div class="columns">
                         <div class="column is-2" v-if="types.length != 0 & locations.length != 0">
                             <b-button
-                                v-if="isComponentModalActive == false"
+                                v-if="isComponentModalActive == false && user.is_superuser"
                                 icon-left="plus" @click="isComponentModalActive = true">
                                 Ajouter un équipement
                             </b-button>
@@ -353,7 +355,7 @@
                                     <div class="control is-flex">
                                         <button class="button is-warning" @click="getEquipment(props.row.id); showEquipment = true"><i class="fas fa-edit"></i></button>
                                     </div>
-                                    <div>
+                                    <div v-if="user.is_superuser">
                                         <button class="button is-danger" @click="callDelete(props.row.id)"><i class="fas fa-trash"></i></button>
                                     </div>
                                 </b-field>
@@ -407,6 +409,7 @@
 <script>
 import typeEquipment from './typeEquipment.vue'
 import Location from './Location.vue'
+import axios from 'axios'
 
 export default {
     components:{
@@ -442,7 +445,7 @@ export default {
             equipementOne:[],
             isLoading: false,
             isFullPage: true,
-            error_status:'',
+            newError:'',
             search:'',
             isEmpty: false,
         }
@@ -458,18 +461,18 @@ export default {
                 }
             })
         }, 
+        user(){
+          return this.$store.getters['authentication/user']
+        },
         equipments(){
             return this.$store.state.equipments.equipments
         },
-        // equipmentOne(){
-        //     return this.$store.state.equipments.equipment
-        // },
         types(){
             return this.$store.state.equipments.types
         },
         locations(){
             return this.$store.state.equipments.locations
-        }
+        },
     },
     methods: {
         refresh(){
@@ -483,21 +486,10 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     this.equipment.last_check = this.equipment.date_purchase
-                    this.$store.dispatch('equipments/addEquipment', this.equipment)
-                    this.error_status = this.$store.dispatch('equipments/getErrors')
-                    // var error = this.errors.then( body => console.log( JSON.parse( body ) ) )
-                    // console.log(error)
-                    if(this.error_status == 400 || this.error_status == 500){
-                        this.$notification.open({
-                            duration: 500,
-                            message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                            hasIcon: true
-                        })
-                    }
-                    else{
+                    axios.post('/api/manage/equipments/create', this.equipment)
+                    .then(response => {
                         this.isLoading = true
+                        this.newError = ''
                         this.equipment = []
                         setTimeout(() => {
                             this.$store.dispatch('equipments/getEquipments');
@@ -514,7 +506,17 @@ export default {
                                 hasIcon: true
                             })
                         }, 500)   
-                    }
+                    })
+                    .catch(error => {
+                        this.newError = error.response.data
+                        this.$notification.open({
+                            duration: 500,
+                            message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    })
                 }
             })
         },
@@ -541,9 +543,8 @@ export default {
         deleteEquipment(payload){
             this.$store.dispatch('equipments/deleteEquipment', payload)
             this.isDelete = false
-            this.error_status = this.$store.dispatch('equipments/getErrors')
             //console.log(this.errors)
-            if(this.error_status != 400 || this.error_status != 500){
+            if(this.newError != 400 || this.newError != 500){
                 setTimeout(() => {
                     this.$store.dispatch('equipments/getEquipments');
                     //location.reload()
@@ -575,35 +576,39 @@ export default {
         updateEquipment(payload){
             this.$validator.validateAll().then((result) => {
                 if (result) {
-                    this.$store.dispatch('equipments/updateEquipment', payload)
-                    this.error_status = this.$store.dispatch('equipments/getErrors')
-                    if(this.error_status == 400 || this.error_status == 500){
-                        this.$notification.open({
-                            duration: 20000,
-                            message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                            hasIcon: true
-                        })
-                    }
-                    else
-                    {
+                    //this.$store.dispatch('equipments/updateEquipment', payload)
+                    //this.newError = this.$store.dispatch('equipments/getErrors')
+                    axios.put(`/api/manage/equipments/update/${payload.id}`, payload)
+                    .then(response => {
+                        this.newError = ''
                         this.isLoading = true
+                        this.equipment = []
                         setTimeout(() => {
                             this.$store.dispatch('equipments/getEquipments');
-                            //location.reload()
+                            //location.re#load()
                             this.$el.textContent
                             this.isLoading = false
                             this.showEquipment = false
+                            this.isComponentModalActive = false
                             this.$notification.open({
                                 duration: 5000,
-                                message: `Mise à jour effectuée avec succès`,
+                                message: `Enregistrement effectué avec succès`,
                                 position: 'is-bottom-right',
                                 type: 'is-success',
                                 hasIcon: true
                             })
-                        }, 500)
-                    }
+                        }, 500)   
+                    })
+                    .catch(error => {
+                        this.newError = error.response.data
+                        this.$notification.open({
+                            duration: 500,
+                            message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    })
                 }
             })
         }
@@ -617,6 +622,8 @@ export default {
         this.$store.dispatch('equipments/getEquipments');
         this.$store.dispatch('equipments/getTypes');
         this.$store.dispatch('equipments/getLocations');
-    }
+        this.$store.dispatch('authentication/getUser');
+    },
+   
 }
 </script>

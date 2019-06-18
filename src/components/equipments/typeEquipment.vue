@@ -36,6 +36,7 @@
                                     required>
                                 </b-input>
                             </b-field>
+                            <p v-if="newError" class="help is-danger">Ce type d'équipement existe déjà !</p>
                         </section>
                         <footer class="modal-card-foot">
                             <button class="button is-primary" @click="addType">Valider</button>
@@ -58,6 +59,7 @@
                     <b-field label="Nom du type de l'équipement">
                         <b-input v-model="type.title"></b-input>
                     </b-field>
+                    <p v-if="newError" class="help is-danger">Ce type existe déjà !</p>
                     <b-field grouped group-multiline>
                         <b-button type="is-primary" @click="updateType(type)">Modifier</b-button>
                         <b-button @click="isShowType = false">Annuler</b-button>
@@ -79,7 +81,7 @@
             <div class="columns">
                 <div class="column is-2">
                     <b-button
-                        v-if="isAddType == false"
+                        v-if="isAddType == false && user.is_superuser"
                         icon-left="plus" @click="isAddType = true">
                         Ajouter un type
                     </b-button>
@@ -99,7 +101,7 @@
             </div>
             
             <hr>
-             <b-field label="Filtre par type d'équipement" v-if="isShowType">
+             <b-field label="Filtre par type d'équipement" v-if="isAddType == false ">
                 <b-input v-model="search" ></b-input>                               
             </b-field>
             <b-field grouped group-multiline v-if="isAddType == false">
@@ -119,7 +121,7 @@
             </b-field>
 
             <b-table
-                v-if="isAddType == false"
+                v-if="isAddType == false "
                 :data="isEmpty ? [] : filterTypes"
                 :paginated="isPaginated"
                 :per-page="perPage"
@@ -139,10 +141,10 @@
                     </b-table-column>
                     <b-table-column sortable centered>
                         <b-field grouped group-multiline>
-                            <div class="control is-flex">
+                            <div class="control is-flex" v-if="user.is_superuser">
                                 <button class="button is-warning" @click="getType(props.row.id); isShowType = true"><i class="fas fa-edit"></i></button>
                             </div>
-                            <div>
+                            <div v-if="user.is_superuser">
                                 <button class="button is-danger" @click="callDelete(props.row.id)"><i class="fas fa-trash"></i></button>
                             </div>
                         </b-field>
@@ -168,6 +170,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     data() {
         return {
@@ -176,7 +179,13 @@ export default {
             error: false, 
             isPaginated: true,
             isPaginationSimple: false,
-            defaultSortDirection: 'asc',
+            _defaultSortDirection: 'asc',
+            get defaultSortDirection() {
+              return this._defaultSortDirection;
+            },
+            set defaultSortDirection(value) {
+              this._defaultSortDirection=value;
+            },
             currentPage: 1,
             perPage: 5,
             defaultOpenedDetails: [1],
@@ -194,6 +203,7 @@ export default {
             type:[],
             search:'',
             isEmpty: false,
+            newError: ''
         }
     },
     computed: {
@@ -208,27 +218,21 @@ export default {
                 if(types.title)
                 return types.title.match(this.search)
             })
-        }
+        },
+        user(){
+          return this.$store.getters['authentication/user']
+        },
         // type(){
         //     return this.$store.state.typeEquipment.type
         // }
     },
     methods: {
         addType(){
-            this.$store.dispatch('typeEquipment/addType', this.newType)
-            this.newType = { title:''}
-            this.errors = this.$store.dispatch('typeEquipment/getErrors')
-    
-            if(this.errors == 400 || this.errors == 500){
-                this.$notification.open({
-                    duration: 500,
-                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                })
-            }
-            else{
+            axios.post('/api/manage/type-of-equipments/', this.newType)
+            //this.$store.dispatch('typeEquipment/addType', this.newType)
+            .then(response => {
+                this.newType = { title:''}
+                this.newError = ''
                 this.isLoading = true
                 setTimeout(() => {
                     this.$store.dispatch('typeEquipment/getTypes');
@@ -245,10 +249,22 @@ export default {
                         hasIcon: true
                     })
                 }, 500)   
-            }
+            })
+            .catch(error => {
+                if(error.response.status == 400 || this.error.response.status == 500){
+                this.newError = error.response.data
+                this.$notification.open({
+                    duration: 500,
+                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                })
+                }
+            })
         },
         getType(payload){
-            this.type = this.filterTypes.find(fruit => fruit.id === payload)
+            this.type = this.filterTypes.find(elt => elt.id === payload)
         },
         callDelete(id){
             this.idEqToDel = id
@@ -257,9 +273,9 @@ export default {
         deleteType(payload){
             this.$store.dispatch('typeEquipment/deleteType', payload)
             this.isDelete = false
-            this.errors = this.$store.dispatch('typeEquipment/getErrors')
-            //console.log(this.errors)
-            if(this.errors != 400 || this.errors !=500){
+            this.newError = this.$store.dispatch('typeEquipment/getErrors')
+            //console.log(this.newError)
+            if(this.newError != 400 || this.newError !=500){
                 setTimeout(() => {
                     this.$store.dispatch('typeEquipment/getTypes');       
                     //location.reload()
@@ -288,10 +304,26 @@ export default {
                 })
             }
         },
+
         updateType(payload){
-            this.$store.dispatch('typeEquipment/updateType', payload)
-            this.errors = this.$store.dispatch('typeEquipment/getErrors')
-            if(this.errors == 0){
+            axios.put(`/api/manage/type-of-equipments/update-or-delete/${payload.id}`, payload)
+            .then(response => {
+                this.$store.dispatch('typeEquipment/getTypes');
+                this.newError = ''
+                //location.reload()
+                this.$el.textContent
+                this.isLoading = false
+                this.isShowType = false
+                this.$notification.open({
+                    duration: 5000,
+                    message: `Mise à jour effectuée avec succès`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                })
+            })
+            .catch(error => {
+                this.newError = error.response.data
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
@@ -299,27 +331,8 @@ export default {
                     type: 'is-danger',
                     hasIcon: true
                 })
-            }
-            else
-            {
-                //this.isLoading = true
-                //setTimeout(() => {
-                    this.$store.dispatch('typeEquipment/getTypes');
-                    //location.reload()
-                    this.$el.textContent
-                    this.isLoading = false
-                    this.isShowType = false
-                    this.$notification.open({
-                        duration: 5000,
-                        message: `Mise à jour effectuée avec succès`,
-                        position: 'is-bottom-right',
-                        type: 'is-success',
-                        hasIcon: true
-                    })
-                //}, 500)
-            }
-        }
-        ,
+            })
+        },
         //Pour la liste déroulante de description
         toggle(row) {
             this.$refs.table.toggleDetails(row)
@@ -327,6 +340,6 @@ export default {
     },
     created() {
         this.$store.dispatch('typeEquipment/getTypes');
-    }
+    },
 }
 </script>

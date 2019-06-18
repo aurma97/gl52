@@ -9,10 +9,16 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Header from './components/headfoot/Header.vue'
 export default {
   components:{
     'app-header': Header
+  },
+  created() {
+    this.$store.dispatch('authentication/getUser');
+    this.$store.dispatch('reservations/getReservations');
+    this.$store.dispatch('equipments/getEquipments');
   }
 }
 </script>

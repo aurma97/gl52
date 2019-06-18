@@ -2,7 +2,14 @@
     <section class="hero is-large is-link is-bold">
         <div class="hero-body">
             <div class="container">
+                <div class="notification is-link is-bold has-text-centered" v-if="success">Connexion réussie, nous rencontrons des problèmes avec le serveur, cliquez sur <strong>Actualiser</strong> pour accéder à l'application<br>
+                    <br>
+                    <router-link to="/" class="button is-link is-inverted">Actualiser</router-link>
+                </div>
                 <span class="notification is-success" v-if="newuser">Bonjour {{newuser}} ! Votre inscription s'est effectuée avec succès, veuillez vous connecter dès à présent !</span>
+            </div>
+            <br>
+            <div class="container" v-if="!success">
                 <p class="title">
                      Connexion
                 </p>
@@ -12,9 +19,6 @@
                 <p class="help is-warning" v-if="error">
                     Connexion impossible, Veuillez vérifier votre login ou mot de passe
                 </p>
-            </div>
-            <br>
-            <div class="container">
                 <div class="columns">
                     <div class="column">
                         <form>
@@ -75,14 +79,12 @@ export default {
             password: '',
             isCardModalActive: false,
             error: false,
+            success: false,
         }
     },
     computed:{
         status(){
             return this.$store.state.authentication.status
-        },
-        user(){
-            return this.$store.state.authentication.user
         },
         newuser(){
           return this.$store.getters['authentication/username']
@@ -95,9 +97,12 @@ export default {
             this.$store.dispatch('authentication/login', { username, password })
             .then((response) => {
                 if (response.status == 200){
-                    //console.log(this.$store)
-                    this.$router.push('/')
+                    this.$store.dispatch('authentication/getUser')
+                    this.$router.push('/') 
+                    this.success = true
                 }
+                this.$store.dispatch('authentication/getUser')
+                this.$router.push('/')  
             })
             .catch(error => {
                 if (error){

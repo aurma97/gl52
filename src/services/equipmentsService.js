@@ -21,14 +21,14 @@ export default {
 
   },
   updateEquipment(payload) {
-    return api.put(`equipments/update-or-delete/${payload.id}`, payload)
+    return api.put(`equipments/update/${payload.id}`, payload)
               .then(response => response.data)
               .catch(function (error) {
                
               })
   },
   deleteEquipment(id) {
-    return api.delete(`equipments/update-or-delete/${id}`)
+    return api.delete(`equipments/delete/${id}`)
               .then(response => { 
                 
               })  

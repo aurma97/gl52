@@ -31,9 +31,9 @@
                         <router-link class="navbar-item" to="/reservation" exact v-if="connected">
                             <i class="fas fa-concierge-bell"></i>&nbsp;&nbsp;Reservation
                         </router-link>
-                        <router-link class="navbar-item" to="/support" exact v-if="connected">
+                        <!-- <router-link class="navbar-item" to="/support" exact v-if="connected">
                             <i class="fas fa-life-ring"></i>&nbsp;&nbsp;Support
-                        </router-link>
+                        </router-link> -->
 
                         <router-link class="navbar-item" to="/connexion" v-if="!connected">
                             <i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;Connexion

@@ -19,7 +19,7 @@
             </ul>
         </nav>
 
-  <!-- Ajout d'un type -->
+  <!-- Ajout d'un emplacement -->
 
         <template v-if="isAddLocation">
             <section>
@@ -35,6 +35,7 @@
                                     required>
                                 </b-input>
                             </b-field>
+                             <p v-if="newError" class="help is-danger">Cette position existe déjà !</p>
                         </section>
                         <footer class="modal-card-foot">
                             <button class="button is-primary" @click="addLocation">Valider</button>
@@ -57,6 +58,7 @@
                     <b-field label="Nom du location de l'équipement">
                         <b-input v-model="location.name"></b-input>
                     </b-field>
+                     <p v-if="newError" class="help is-danger">Cette position existe déjà !</p>
                     <b-field grouped group-multiline>
                         <b-button location="is-primary" @click="updateLocation(location)">Modifier</b-button>
                         <b-button @click="isShowLocation = false">Annuler</b-button>
@@ -78,7 +80,7 @@
             <div class="columns">
                 <div class="column is-2">
                     <b-button
-                        v-if="isAddLocation == false"
+                        v-if="isAddLocation == false && user.is_superuser"
                         icon-left="plus" @click="isAddLocation = true">
                         Ajouter une position
                     </b-button>
@@ -90,7 +92,7 @@
                             <button class="button is-danger" @click="deleteLocation(idEqToDel)">Confirmation suppression</button>
                         </span>
                         &nbsp;
-                        <span>
+                        <span v-if="user.is_superuser">
                             <button class="button" @click="isDelete = false">Annuler</button>
                         </span>
                     </div>
@@ -141,10 +143,10 @@
                     </b-table-column>
                     <b-table-column sortable centered>
                         <b-field grouped group-multiline>
-                            <div class="control is-flex">
+                            <div class="control is-flex" v-if="user.is_superuser">
                                 <button class="button is-warning" @click="getLocation(props.row.id); isShowLocation = true"><i class="fas fa-edit"></i></button>
                             </div>
-                            <div>
+                            <div v-if="user.is_superuser">
                                 <button class="button is-danger" @click="callDelete(props.row.id)"><i class="fas fa-trash"></i></button>
                             </div>
                         </b-field>
@@ -170,12 +172,13 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     data() {
         return {
             data:[],
             idEqToDel:'',
-            error: false, 
+            newError: "", 
             isPaginated: true,
             isPaginationSimple: false,
             defaultSortDirection: 'asc',
@@ -189,7 +192,6 @@ export default {
             date: new Date(),
             isLoading: false,
             isFullPage: true,
-            errors:'',
             newLocation:{
                 name:'',
             },
@@ -207,25 +209,17 @@ export default {
                 if(location.name)
                 return location.name.match(this.search)
             })
-        }
+        },
+        user(){
+          return this.$store.getters['authentication/user']
+        },
     },
     methods: {
         addLocation(){
-            this.$store.dispatch('location/addLocation', this.newLocation)
-            this.newLocation = { name:''}
-            this.errors = this.$store.dispatch('location/getErrors')
-    
-            if(this.errors == 400 || this.errors == 500){
-                this.$notification.open({
-                    duration: 500,
-                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                })
-            }
-            else{
+            axios.post('/api/manage/location/', this.newLocation)
+            .then(response => {
                 this.isLoading = true
+                this.newError = ""
                 setTimeout(() => {
                     this.$store.dispatch('location/getLocations');
                     //location.reload()
@@ -241,7 +235,19 @@ export default {
                         hasIcon: true
                     })
                 }, 500)   
-            }
+            })
+            .catch(error => {
+                this.newError = error.response.data
+                this.$notification.open({
+                    duration: 500,
+                    message: `Un problème est survenu lors de l'ajout, veuillez reessayer`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                })
+            })
+            //this.$store.dispatch('location/addLocation', this.newLocation)
+            this.newLocation = { name:''}
         },
         getLocation(payload){
             //this.$store.dispatch('location/getLocation', payload)
@@ -287,10 +293,23 @@ export default {
             }
         },
         updateLocation(payload){
-            this.$store.dispatch('location/updateLocation', payload)
-            this.errors = this.$store.dispatch('location/getErrors')
+            // this.$store.dispatch('location/updateLocation', payload)
+            axios.put(`/api/manage/location/update-or-delete/${payload.id}`, payload)
+            .then(response => {
+                this.newError = ''
+                this.$store.dispatch('location/getLocations');
+                this.isShowLocation = false
+                this.$notification.open({
+                    duration: 5000,
+                    message: `Mise à jour effectuée avec succès`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                })
 
-            if(this.errors == 400 || this.errors == 500){
+            })
+            .catch(error => {
+                this.newError = error.response.data
                 this.$notification.open({
                     duration: 20000,
                     message: `Un problème est survenu lors de la mise à jour, veuillez reessayer`,
@@ -298,24 +317,7 @@ export default {
                     type: 'is-danger',
                     hasIcon: true
                 })
-            }
-            else
-            {
-                //this.isLoading = true
-            
-                    this.$store.dispatch('location/getLocations');
-                    //location.reload()
-                    //this.$el.textContent
-                    this.isShowLocation = false
-                    this.$notification.open({
-                        duration: 5000,
-                        message: `Mise à jour effectuée avec succès`,
-                        position: 'is-bottom-right',
-                        type: 'is-success',
-                        hasIcon: true
-                    })
-              
-            }
+            })
         }
         ,
         //Pour la liste déroulante de description
@@ -325,6 +327,6 @@ export default {
     },
     created() {
         this.$store.dispatch('location/getLocations');
-    }
+    },
 }
 </script>

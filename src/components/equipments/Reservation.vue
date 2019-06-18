@@ -23,6 +23,9 @@
                         <li class="is-active"><a href="#">Ajout d'une réservation</a></li>
                     </ul>
                 </div> 
+                <div class="level-right">
+                    <button class="button is-link" @click="refresh">Actualiser</button>
+                </div>
                 <!-- <div class="level-right">
                     <button class="button is-link" @click="refresh">Actualiser</button>
                 </div> -->
@@ -269,7 +272,7 @@
                             <div class="control is-flex">
                                 <button class="button is-warning" @click="getReservation(props.row.id); isUpdate = true"><i class="fas fa-edit"></i></button>
                             </div>
-                            <div>
+                            <div v-if="user.is_superuser">
                                 <button class="button is-danger" @click="callDelete(props.row.id)"><i class="fas fa-trash"></i></button>
                             </div>
                         </b-field>
@@ -390,7 +393,7 @@ export default {
         },
         user(){
             return this.$store.state.authentication.user
-        }
+        },
     },
     methods: {
         refresh(){
@@ -451,20 +454,23 @@ export default {
                     var res = this.getReservationByEquipment(this.reservation.equipment_id)
                     var newdate = this.reservation.start.split("/").reverse().join("-");
 
+                    //console.log(res);
+
                     if (res){
                         if (res.start == newdate){
-                            console.log("1-"+res.start)
-                            console.log("1-"+newdate)
+                            //console.log("1-"+res.start)
+                            //console.log("1-"+newdate)
                             this.validationRangeError = true
                         }
                         else if (newdate < res.end ){
-                            console.log("2-"+res.end)
-                            console.log("2-"+newdate)
+                            //console.log("2-"+res.end)
+                            //console.log("2-"+newdate)
                             this.validationMotifError = false                
                             this.validationRangeError = true
                         }
                         else
                         {
+                            //console.log("we are here")
                             this.validationRangeError = false
                             this.validationMotifError = false                
                             
@@ -492,19 +498,48 @@ export default {
                             }
                         }
                     }
+                    else
+                    {
+                        //console.log("we are here")
+                        this.validationRangeError = false
+                        this.validationMotifError = false                
+                        
+                        this.$store.dispatch('reservations/addReservation', this.reservation)
+                        this.$store.dispatch('reservations/getErrors')
+                        this.isLoading = true
+                        setTimeout(() => {
+                            this.$store.dispatch('reservations/getErrors').then( body => {
+                                if (body == 400){
+                                    this.errorMessage()
+                                    this.isLoading = false
+                                }
+                                else{
+                                this.resetAll()
+                                this.successMessage()
+                                }
+                                this.errors_status = this.$store.dispatch('reservations/getErrors')
+                            })            
+                        },2000)
+
+                        if (this.errors_status == 201)
+                        {
+                            this.resetAll()
+                            this.successMessage()
+                        }
+                    }
                 }
             })
         },
         getReservation(payload){
 
             this.reservationOne = this.filterReservations.find(fruit => fruit.id === payload)
-            console.log(this.reservationOne)
+            //console.log(this.reservationOne)
             this.range = [this.reservationOne.start, this.reservationOne.end]
             this.reservation.id = this.reservationOne.id
             this.reservation.start = this.reservationOne.start
             this.reservation.end = this.reservationOne.end
             this.rangeOne = [this.reservationOne.start, this.reservationOne.end]
-            console.log(this.range);            
+            //console.log(this.range);            
             this.reservation.status = this.reservationOne.status
             this.reservation.motif = this.reservationOne.motif
             this.reservation.equipment_id = this.reservationOne.equipment_id.id
@@ -556,7 +591,7 @@ export default {
             this.reservation.start = this.range[0]
             this.reservation.end = this.range[1]
 
-            console.log(this.reservation.start)
+            //console.log(this.reservation.start)
             this.$store.dispatch('reservations/updateReservation', this.reservation)
             this.errors_status = this.$store.dispatch('reservations/getErrors')
             if(this.errors_status == 400 || this.errors_status == 500){
@@ -593,10 +628,16 @@ export default {
             this.$refs.table.toggleDetails(row)
         },
     },
-    created() {
+   created () {
         this.$store.dispatch('reservations/getReservations');
         this.$store.dispatch('equipments/getEquipments');
         this.$store.dispatch('authentication/getUser');
-    }
+    },
+    mounted(){
+        this.$store.dispatch('reservations/getReservations');
+        this.$store.dispatch('equipments/getEquipments');
+        this.$store.dispatch('reservations/getErrors');
+        this.$store.dispatch('authentication/getUser');
+    },
 }
 </script>

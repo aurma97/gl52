@@ -12,13 +12,16 @@ export default {
   postTypeEquipment(payload) {
     return api.post(`type-of-equipments/`, payload)
               .then(response => response.data)
+              .catch(error => error.response)
   },
   updateTypeEquipment(payload) {
     return api.put(`type-of-equipments/update-or-delete/${payload.id}`, payload)
               .then(response => response.data)
+              .catch(error => error.response)
   },
   deleteTypeEquipment(id) {
     return api.delete(`type-of-equipments/update-or-delete/${id}`)
               .then(response => response.data)
+              .catch(error => error.response)
   }
 }
