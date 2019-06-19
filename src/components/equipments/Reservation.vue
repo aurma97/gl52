@@ -269,7 +269,7 @@
 
                     <b-table-column sortable centered>
                         <b-field grouped group-multiline>
-                            <div class="control is-flex">
+                            <div v-if="user.username == props.row.user_id.username || user.is_superuser" class="control is-flex">
                                 <button class="button is-warning" @click="getReservation(props.row.id); isUpdate = true"><i class="fas fa-edit"></i></button>
                             </div>
                             <div v-if="user.is_superuser">
